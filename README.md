@@ -3,7 +3,7 @@ Lndroid.Wallet - Lightning wallet for Android with open API
 
 Lndroid.Wallet is a Lightning wallet based on [Lndroid.Framework](https://github.com/lndroid/lndroid-framework/). It is meant to demonstrate the capabilities of the framework, and with great luck to become a real wallet with an open API.
 
-Here is the demo of how an Android app might connect to the wallet and access the Bitcoin Lightning Network over the IPC API. The demo app is [Lndroid.Messenger](https://github.com/lndroid-messenger/), which allows you to exchange messages attached to lightning payments.
+Here is the demo of how an Android app might connect to the wallet and access the Bitcoin Lightning Network over the IPC API. The demo app is [Lndroid.Messenger](https://github.com/lndroid/lndroid-messenger/), which allows you to exchange messages attached to lightning payments.
 
 [![Lndroid Demo](http://img.youtube.com/vi/bF-1QxFTvHU/0.jpg)](https://www.youtube.com/watch?v=bF-1QxFTvHU "Lndroid Demo")
 
