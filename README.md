@@ -9,7 +9,8 @@ Here is the demo of how an Android app might connect to the wallet and access th
 
 *Video hosted on YouTube*
 
-Here is what you see on the video:
+# Here is what you see on the Lndroid demo video
+
 1. We have Lndroid.Wallet set up on both phones, with some Lightning balance (meaning that they have open channels to some routing nodes).
 2. Now Lndroid.Messenger app is opened for the first time after install.
 3. App detects that it is not connected to any wallet, and starts an implicit activity intent to connect to any installed wallet that exposes the Lndroid.Framework IPC API. 
