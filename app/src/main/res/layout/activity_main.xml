@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="31dp"
+        tools:layout_editor_absoluteY="37dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <TextView
+                android:id="@+id/lightningBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:text="Lightning: 0"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/blockchainBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Blockchain: 0"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintStart_toStartOf="@id/lightningBalance"
+                app:layout_constraintTop_toBottomOf="@id/lightningBalance"
+                />
+
+            <TextView
+                android:id="@+id/state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="State"
+                app:layout_constraintStart_toStartOf="@+id/blockchainBalance"
+                app:layout_constraintTop_toBottomOf="@+id/blockchainBalance" />
+
+            <Button
+                android:id="@+id/newAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="New address"
+                app:layout_constraintStart_toStartOf="@+id/state"
+                app:layout_constraintTop_toBottomOf="@+id/state" />
+
+            <Button
+                android:id="@+id/sendPayment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Send payment"
+                app:layout_constraintStart_toStartOf="@+id/newAddress"
+                app:layout_constraintTop_toBottomOf="@+id/newAddress"
+                />
+
+            <Button
+                android:id="@+id/addInvoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Add invoice"
+                app:layout_constraintStart_toStartOf="@+id/sendPayment"
+                app:layout_constraintTop_toBottomOf="@+id/sendPayment" />
+
+            <Button
+                android:id="@+id/listPayments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="List payments"
+                app:layout_constraintStart_toStartOf="@+id/addInvoice"
+                app:layout_constraintTop_toBottomOf="@+id/addInvoice" />
+
+            <Button
+                android:id="@+id/connectPeer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Connect peer"
+                app:layout_constraintStart_toStartOf="@+id/listPayments"
+                app:layout_constraintTop_toBottomOf="@+id/listPayments" />
+
+            <Button
+                android:id="@+id/openChannel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Open channel"
+                app:layout_constraintStart_toStartOf="@+id/connectPeer"
+                app:layout_constraintTop_toBottomOf="@+id/connectPeer" />
+
+            <Button
+                android:id="@+id/unlock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Unlock"
+                app:layout_constraintStart_toStartOf="@+id/openChannel"
+                app:layout_constraintTop_toBottomOf="@+id/openChannel" />
+
+            <Button
+                android:id="@+id/initWallet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Init Wallet"
+                app:layout_constraintStart_toStartOf="@+id/unlock"
+                app:layout_constraintTop_toBottomOf="@+id/unlock" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

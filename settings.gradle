@@ -1,0 +1,2 @@
+include ':app', ':lndroid-framework-debug', ':lndroid-daemon-debug', ':Lndmobile'
+rootProject.name='Lndroid.Wallet'
