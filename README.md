@@ -6,6 +6,7 @@ Lndroid.Wallet is a Lightning wallet based on [Lndroid.Framework](https://github
 Here is the demo of how an Android app might connect to the wallet and access the Bitcoin Lightning Network over the IPC API. The demo app is [Lndroid.Messenger](https://github.com/lndroid-messenger/), which allows you to exchange messages attached to lightning payments.
 
 [![Lndroid Demo](http://img.youtube.com/vi/bF-1QxFTvHU/0.jpg)](https://www.youtube.com/watch?v=bF-1QxFTvHU "Lndroid Demo")
+
 *Video hosted on YouTube*
 
 Here is what you see on the video:
