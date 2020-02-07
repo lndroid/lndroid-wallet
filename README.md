@@ -1,10 +1,12 @@
 Lndroid.Wallet - Lightning wallet for Android with open API
 ===========================================================
 
-Lndroid.Wallet is a Lightning wallet based on [Lndroid.Framework](https://github.com/lndroid-framework/). It is meant to demonstrate the capabilities of the framework, and with great luck to become a real wallet with an open API.
+Lndroid.Wallet is a Lightning wallet based on [Lndroid.Framework](https://github.com/lndroid/lndroid-framework/). It is meant to demonstrate the capabilities of the framework, and with great luck to become a real wallet with an open API.
 
 Here is the demo of how an Android app might connect to the wallet and access the Bitcoin Lightning Network over the IPC API. The demo app is [Lndroid.Messenger](https://github.com/lndroid-messenger/), which allows you to exchange messages attached to lightning payments.
 
+https://www.youtube.com/watch?v=bF-1QxFTvHU
+[![Lndroid Demo](http://img.youtube.com/vi/bF-1QxFTvHU/0.jpg)](https://www.youtube.com/watch?v=bF-1QxFTvHU "Lndroid Demo")
 
 Here is what you see on the video:
 1. We have Lndroid.Wallet set up on both phones, with some Lightning balance (meaning that they have open channels to some routing nodes).
@@ -21,11 +23,11 @@ Here is what you see on the video:
 12. Now App can display the new contact.
 13. User adds the contact on the other phone the same way.
 14. Now User clicks on the Contact name in the App.
-15. App requests access to manage payments of this specific Contact. Wallet Activity is started, and User confirms.
+15. App requests permission to manage payments of this specific Contact. Wallet Activity is started, and User confirms.
 16. The same permission is acquired on the other phone.
 17. Now User types a message in the App, which is sent by the Wallet as a lightning payment with specified value in satoshis.
 18. The App on the peer phone immediately displays the incoming message, and User sends a message in return.
-19. It works!
+19. It works! Your App can access Lightning Network on any phone with an Lndroid.Framework-based wallet.
 
 # TODO
 
@@ -40,7 +42,8 @@ Here is what you see on the video:
 5. Gson
 6. Lndroid.Framework
 7. Lndroid.Daemon
-8. ZXing + ZXing-android-embedded for QR codes
+8. Lndmobile (lnd mobile SDK)
+9. ZXing + ZXing-android-embedded for QR codes
 
 # Important
 
