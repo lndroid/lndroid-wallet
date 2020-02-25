@@ -8,26 +8,23 @@ import org.lndroid.framework.WalletData;
 import org.lndroid.framework.client.IPluginClient;
 import org.lndroid.framework.usecases.GetInvoice;
 
-public class GetInvoiceViewModel extends ViewModel {
+public class GetInvoiceViewModel extends WalletViewModelBase {
 
     private static final String TAG = "GetInvoiceViewModel";
-    private IPluginClient pluginClient_;
 
     private GetInvoice getInvoice_;
 
     public GetInvoiceViewModel() {
-        super();
-
-        pluginClient_ = WalletServer.buildPluginClient();
-        Log.i(TAG, "plugin client "+pluginClient_);
+        super(TAG);
 
         // create use cases
-        getInvoice_ = new GetInvoice(pluginClient_);
+        getInvoice_ = new GetInvoice(pluginClient());
     }
 
     @Override
     protected void onCleared() {
         getInvoice_.destroy();
+        super.onCleared();
     }
 
     void setGetInvoiceRequest(WalletData.GetRequestLong r) {

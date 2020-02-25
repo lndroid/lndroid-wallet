@@ -7,26 +7,23 @@ import androidx.lifecycle.ViewModel;
 import org.lndroid.framework.client.IPluginClient;
 import org.lndroid.framework.usecases.JobOpenChannel;
 
-public class OpenChannelViewModel extends ViewModel {
+public class OpenChannelViewModel extends WalletViewModelBase {
 
     private static final String TAG = "OpenChannelViewModel";
-    private IPluginClient pluginClient_;
 
     private JobOpenChannel openChannel_;
 
     public OpenChannelViewModel() {
-        super();
-
-        pluginClient_ = WalletServer.buildPluginClient();
-        Log.i(TAG, "plugin client "+pluginClient_);
+        super(TAG);
 
         // create use cases
-        openChannel_ = new JobOpenChannel(pluginClient_);
+        openChannel_ = new JobOpenChannel(pluginClient());
     }
 
     @Override
     protected void onCleared() {
         openChannel_.destroy();
+        super.onCleared();
     }
 
     JobOpenChannel openChannel() { return openChannel_; }

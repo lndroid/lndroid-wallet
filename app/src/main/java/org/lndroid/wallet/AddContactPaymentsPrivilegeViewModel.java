@@ -6,22 +6,22 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.client.IPluginClient;
 import org.lndroid.framework.common.Errors;
+import org.lndroid.framework.defaults.DefaultPlugins;
 import org.lndroid.framework.engine.AuthClient;
 import org.lndroid.framework.engine.IAuthClient;
 import org.lndroid.framework.usecases.GetContact;
 import org.lndroid.framework.usecases.rpc.RPCAuthorize;
 import org.lndroid.framework.usecases.user.GetAuthRequestUser;
 
-public class AddContactPaymentsPrivilegeViewModel extends ViewModel {
+public class AddContactPaymentsPrivilegeViewModel extends WalletViewModelBase {
     private static final String TAG = "AddContactPaysPrivVM";
-    private IPluginClient pluginClient_;
     private IAuthClient authClient_;
 
-    private int authRequestId_;
+    private long authRequestId_;
     private WalletData.AuthRequest authRequest_;
     private WalletData.ContactPaymentsPrivilege request_;
     private WalletData.User user_;
@@ -35,14 +35,13 @@ public class AddContactPaymentsPrivilegeViewModel extends ViewModel {
     private RPCAuthorize rpcAuthorize_;
 
     public AddContactPaymentsPrivilegeViewModel() {
-        super();
+        super(TAG);
 
-        pluginClient_ = WalletServer.buildPluginClient();
         authClient_ = new AuthClient(WalletServer.getInstance().server());
 
         // create use cases
-        getAuthRequestUser_ = new GetAuthRequestUser(pluginClient_);
-        getContact_ = new GetContact(pluginClient_);
+        getAuthRequestUser_ = new GetAuthRequestUser(pluginClient());
+        getContact_ = new GetContact(pluginClient());
         rpcAuthorize_ = new RPCAuthorize(authClient_);
     }
 
@@ -50,6 +49,7 @@ public class AddContactPaymentsPrivilegeViewModel extends ViewModel {
     protected void onCleared() {
         getAuthRequestUser_.destroy();
         getContact_.destroy();
+        super.onCleared();
     }
 
     private void setError(String label,String code, String err) {
@@ -59,7 +59,8 @@ public class AddContactPaymentsPrivilegeViewModel extends ViewModel {
     }
 
     private void getRequest() {
-        authClient_.getTransactionRequest(authRequest_.userId(), authRequest_.txId(), WalletData.ContactPaymentsPrivilege.class,
+        authClient_.getTransactionRequest(DefaultPlugins.ADD_CONTACT_PAYMENTS_PRIVILEGE,
+                authRequest_.userId(), authRequest_.txId(),
                 new IResponseCallback<WalletData.ContactPaymentsPrivilege>() {
                     @Override
                     public void onResponse(WalletData.ContactPaymentsPrivilege r) {
@@ -119,7 +120,7 @@ public class AddContactPaymentsPrivilegeViewModel extends ViewModel {
         getContact_.start();
     }
 
-    public void start(int authRequestId) {
+    public void start(long authRequestId) {
         if (authRequestId_ == authRequestId)
             return;
 

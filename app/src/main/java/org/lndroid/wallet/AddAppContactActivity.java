@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.ActionDecodePayReq;
 import org.lndroid.framework.usecases.IRequestFactory;
@@ -26,7 +26,7 @@ public class AddAppContactActivity extends AppCompatActivity {
 
     private static final String TAG = "AddAppContactActivity";
 
-    private int authRequestId_;
+    private long authRequestId_;
     private EditText payReq_;
     private EditText name_;
     private TextView state_;
@@ -39,9 +39,10 @@ public class AddAppContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact_app);
 
         model_ = ViewModelProviders.of(this).get(AddAppContactViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         Intent intent = getIntent();
-        authRequestId_ = intent.getIntExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
+        authRequestId_ = intent.getLongExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
         if (authRequestId_ == 0) {
             Log.e(TAG, "No auth request id");
             finish();

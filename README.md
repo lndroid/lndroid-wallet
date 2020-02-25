@@ -31,6 +31,30 @@ Here is the demo of how an Android app might connect to the wallet and access th
 18. The App on the peer phone immediately displays the incoming message, and User sends a message in return.
 19. It works! Your App can access Lightning Network on any phone with an Lndroid.Framework-based wallet.
 
+# Roadmap
+
+- [x] Basic wallet prototype to test some app
+- [x] QR code codec to simplify adding/sharing of Contacts
+- [ ] OS-level custom 'dangerous' permission for apps to access the wallet 
+- [ ] Proper UI for admin tasks like Seed generation, Unlock, etc
+- [ ] Initial onboarding UI and flow
+- [ ] UI to manage channels, peers, nodes, on-chain tx
+- [ ] At least 1 channel backup mechanism (local dir)
+- [ ] Recovery from seed + channel backup
+- [ ] On-chain tx support
+- [ ] Unit tests
+- [ ] Testnet release
+- [ ] Mainnet release?
+
+- [ ] Wallet password change support
+- [ ] Wallet security settings (pin/bio/faceid/device-unlocked/etc)
+- [ ] View wallet logs, with filters, w/ auto-search of payments/channels in logs
+- [ ] Show history of method calls, w/ input/output messages, lnd messages, etc, per user
+- [ ] API explorer, allowing to execute any API method w/ any params?
+- [ ] Built-in API docs, auto-generated from framework sources using some annotations?
+- [ ] Network/graph explorer: search the network graph, visualize routes, etc
+- [ ] Authorization UI for every API method
+
 # TODO
 
 ...This readme is just an intro, expand it to properly cover what Lndroid does, and how to use it...

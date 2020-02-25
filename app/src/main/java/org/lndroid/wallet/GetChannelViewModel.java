@@ -8,26 +8,23 @@ import org.lndroid.framework.WalletData;
 import org.lndroid.framework.client.IPluginClient;
 import org.lndroid.framework.usecases.GetChannel;
 
-public class GetChannelViewModel extends ViewModel {
+public class GetChannelViewModel extends WalletViewModelBase {
 
     private static final String TAG = "GetChannelViewModel";
-    private IPluginClient pluginClient_;
 
     private GetChannel getChannel_;
 
     public GetChannelViewModel() {
-        super();
-
-        pluginClient_ = WalletServer.buildPluginClient();
-        Log.i(TAG, "plugin client "+pluginClient_);
+        super(TAG);
 
         // create use cases
-        getChannel_ = new GetChannel(pluginClient_);
+        getChannel_ = new GetChannel(pluginClient());
     }
 
     @Override
     protected void onCleared() {
         getChannel_.destroy();
+        super.onCleared();
     }
 
     void setChannelRequest(WalletData.GetRequestLong r) {

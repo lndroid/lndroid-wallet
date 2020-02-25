@@ -8,26 +8,23 @@ import org.lndroid.framework.WalletData;
 import org.lndroid.framework.client.IPluginClient;
 import org.lndroid.framework.usecases.GetSendPayment;
 
-public class GetSendPaymentViewModel extends ViewModel {
+public class GetSendPaymentViewModel extends WalletViewModelBase {
 
     private static final String TAG = "GetSendPaymentViewModel";
-    private IPluginClient pluginClient_;
 
     private GetSendPayment getSendPayment_;
 
     public GetSendPaymentViewModel() {
-        super();
-
-        pluginClient_ = WalletServer.buildPluginClient();
-        Log.i(TAG, "plugin client "+pluginClient_);
+        super(TAG);
 
         // create use cases
-        getSendPayment_ = new GetSendPayment(pluginClient_);
+        getSendPayment_ = new GetSendPayment(pluginClient());
     }
 
     @Override
     protected void onCleared() {
         getSendPayment_.destroy();
+        super.onCleared();
     }
 
     void setSendPaymentRequest(WalletData.GetRequestLong r) {

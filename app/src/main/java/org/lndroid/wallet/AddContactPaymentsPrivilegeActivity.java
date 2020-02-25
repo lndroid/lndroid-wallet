@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common .IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.rpc.RPCAuthorize;
@@ -20,7 +20,7 @@ public class AddContactPaymentsPrivilegeActivity extends AppCompatActivity {
 
     private static final String TAG = "AddContPaymentsPrivAct";
 
-    private int authRequestId_;
+    private long authRequestId_;
     private TextView state_;
     private TextView app_;
     private TextView contact_;
@@ -33,9 +33,10 @@ public class AddContactPaymentsPrivilegeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact_payments_privilege);
 
         model_ = ViewModelProviders.of(this).get(AddContactPaymentsPrivilegeViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         Intent intent = getIntent();
-        authRequestId_ = intent.getIntExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
+        authRequestId_ = intent.getLongExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
         if (authRequestId_ == 0) {
             Log.e(TAG, "No auth request id");
             finish();

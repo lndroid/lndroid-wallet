@@ -38,6 +38,7 @@ public class GetInvoiceActivity extends AppCompatActivity {
         final long id = intent.getLongExtra(Application.ID_MESSAGE, 0);
 
         model_ = ViewModelProviders.of(this).get(GetInvoiceViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         dateFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("en", "US"));
 

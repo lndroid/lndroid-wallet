@@ -35,6 +35,7 @@ public class GetChannelActivity extends AppCompatActivity {
             throw new RuntimeException("Channel id not provided");
 
         model_ = ViewModelProviders.of(this).get(GetChannelViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
 //        dateFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("en", "US"));
 

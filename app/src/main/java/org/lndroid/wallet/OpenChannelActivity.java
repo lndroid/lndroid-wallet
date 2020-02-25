@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 
@@ -33,6 +33,7 @@ public class OpenChannelActivity extends AppCompatActivity {
         setContentView(R.layout.activity_open_channel);
 
         model_ = ViewModelProviders.of(this).get(OpenChannelViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         pubkey_ = findViewById(R.id.pubkey);
         amount_ = findViewById(R.id.amount);

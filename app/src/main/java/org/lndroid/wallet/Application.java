@@ -25,9 +25,6 @@ import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.soloader.SoLoader;
 
-import org.lndroid.framework.DefaultKeyStore;
-import org.lndroid.framework.IDaoConfig;
-import org.lndroid.framework.IKeyStore;
 import org.lndroid.framework.client.IPluginClient;
 import org.lndroid.framework.usecases.bg.RecvPaymentWorker;
 import org.lndroid.framework.usecases.bg.SendPaymentService;
@@ -40,65 +37,6 @@ public class Application extends MultiDexApplication {
 
     public static final String EXTRA_AUTH_REQUEST_ID = "org.lndroid.extra.AUTH_REQUEST_ID";
 
-    // Dao config wrapping an ApplicationContext
-    private static class DaoConfig implements IDaoConfig {
-        private static final String WALLET_DB = "walletdb";
-        private static final String LND_DIR = ".lnd";
-        private static final String DATA_DIR = "data";
-        private static final String PASSWORD_FILE = ".lndp";
-        private static final int WP_AUTH_VALIDITY_PERIOD = 6 * 3600; // 6 hours
-
-        private Context ctx_;
-        private DefaultKeyStore keyStore_;
-
-        public DaoConfig(Context ctx) {
-            ctx_ = ctx;
-
-            keyStore_ = new DefaultKeyStore(ctx);
-            keyStore_.setAuthValidityDuration(WP_AUTH_VALIDITY_PERIOD);
-        }
-
-        @Override
-        public Context getContext() {
-            return ctx_;
-        }
-
-        @Override
-        public String getFilesPath() {
-            return ctx_.getFilesDir().getAbsolutePath();
-        }
-
-        @Override
-        public String getDataPath() {
-            return getFilesPath() + "/" + DATA_DIR;
-        }
-
-        @Override
-        public String getDatabaseName() {
-            return WALLET_DB;
-        }
-
-        @Override
-        public String getDatabasePath() {
-            return ctx_.getDatabasePath(WALLET_DB).getAbsolutePath();
-        }
-
-        @Override
-        public String getPasswordFileName() {
-            return PASSWORD_FILE;
-        }
-
-        @Override
-        public String getLndDirName() {
-            return LND_DIR;
-        }
-
-        @Override
-        public IKeyStore getKeyStore() {
-            return keyStore_;
-        }
-    }
-
     // RecvPayment worker implementation that will ensure WalletServer is
     // started and will provide a Plugin client for the worker
     public static class RecvPaymentWorkerImpl extends RecvPaymentWorker {
@@ -109,7 +47,7 @@ public class Application extends MultiDexApplication {
 
         @Override
         public IPluginClient getPluginClient() {
-            WalletServer.ensure(new DaoConfig(getApplicationContext()));
+            WalletServer.ensure(getApplicationContext());
             return WalletServer.buildPluginClient();
         }
     }
@@ -123,7 +61,7 @@ public class Application extends MultiDexApplication {
 
         @Override
         public IPluginClient getPluginClient() {
-            WalletServer.ensure(new DaoConfig(getApplicationContext()));
+            WalletServer.ensure(getApplicationContext());
             return WalletServer.buildPluginClient();
         }
     }
@@ -135,7 +73,7 @@ public class Application extends MultiDexApplication {
         public IBinder onBind(Intent intent) {
             Toast.makeText(getApplicationContext(), "Starting Lndroid.Wallet service", Toast.LENGTH_SHORT).show();
 
-            WalletServer.ensure(new DaoConfig(getApplicationContext()));
+            WalletServer.ensure(getApplicationContext());
             return WalletServer.getInstance().server().getBinder();
         }
     }
@@ -154,7 +92,7 @@ public class Application extends MultiDexApplication {
         }
 
         // ensure wallet server is started
-        WalletServer.ensure(new DaoConfig(getApplicationContext()));
+        WalletServer.ensure(getApplicationContext());
 
         // ensure RecvPayment and SyncPayment workers are scheduled
         // NOTE: increase version if you adjust work settings to reschedule it

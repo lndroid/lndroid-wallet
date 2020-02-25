@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.JobSendPayment;
@@ -30,6 +30,7 @@ public class SendPaymentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_send_payment);
 
         model_ = ViewModelProviders.of(this).get(SendPaymentViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         payReq_ = findViewById(R.id.payReq);
         state_ = findViewById(R.id.state);

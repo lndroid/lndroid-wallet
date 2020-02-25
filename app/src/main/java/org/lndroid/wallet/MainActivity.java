@@ -1,18 +1,21 @@
 package org.lndroid.wallet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import org.lndroid.framework.WalletData;
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.Errors;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.usecases.ActionAddInvoice;
 import org.lndroid.framework.usecases.JobOpenChannel;
 import org.lndroid.framework.usecases.rpc.RPCGenSeed;
@@ -20,7 +23,7 @@ import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.rpc.RPCInitWallet;
 import org.lndroid.framework.usecases.rpc.RPCUnlockWallet;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
 
     private static final String TAG = "LnApiMain";
 
@@ -126,6 +129,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // catch auth errors to show auth UI
+        model_.clientError().observe(this, new Observer<WalletData.Error>() {
+            @Override
+            public void onChanged(WalletData.Error error) {
+                if (error != null && Errors.MESSAGE_AUTH.equals(error.code())) {
+                    model_.getSessionToken(MainActivity.this);
+                }
+            }
+        });
+
         // unlock use case
         RPCUnlockWallet walletUnlock = model_.unlockWalletRPC();
         walletUnlock.setCallback(this, new IResponseCallback<WalletData.UnlockWalletResponse>() {
@@ -221,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "Wallet info "+info.blockHeight());
 
         String state = "";
-        if (model_.walletState().getValue() == null) {
+        if (st == null) {
             state = "Starting. ";
         } else {
             switch (st.state()) {
@@ -246,6 +259,10 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     throw new RuntimeException("Unknown wallet state");
             }
+        }
+
+        if (!model_.haveSessionToken() && st != null && st.state() == WalletData.WALLET_STATE_OK) {
+            model_.getSessionToken(MainActivity.this);
         }
 
         if (info != null) {

@@ -3,14 +3,19 @@ package org.lndroid.wallet;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.lndroid.framework.IResponseCallback;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 
@@ -20,6 +25,7 @@ public class NewAddressActivity extends AppCompatActivity {
 
     private EditText address_;
     private TextView state_;
+    private ImageView qrCode_;
     private NewAddressViewModel model_;
 
     @Override
@@ -28,9 +34,11 @@ public class NewAddressActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_address);
 
         model_ = ViewModelProviders.of(this).get(NewAddressViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         address_ = findViewById(R.id.address);
         state_ = findViewById(R.id.state);
+        qrCode_ = findViewById(R.id.qrCode);
 
         Button button = findViewById(R.id.done);
         button.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +53,15 @@ public class NewAddressActivity extends AppCompatActivity {
                 Log.i(TAG, "address "+a);
                 state_.setText("New address generated");
                 address_.setText(a.address());
+
+                try {
+                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                    Bitmap bitmap = barcodeEncoder.encodeBitmap(
+                            a.address(), BarcodeFormat.QR_CODE, 600, 600);
+                    qrCode_.setImageBitmap(bitmap);
+                } catch(Exception e) {
+                    state_.setText ("QR code error: "+e);
+                }
             }
 
             @Override

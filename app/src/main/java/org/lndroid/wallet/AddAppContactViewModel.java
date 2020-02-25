@@ -10,10 +10,9 @@ import org.lndroid.framework.engine.IAuthClient;
 import org.lndroid.framework.usecases.ActionDecodePayReq;
 import org.lndroid.framework.usecases.rpc.RPCAuthorize;
 
-public class AddAppContactViewModel extends ViewModel {
+public class AddAppContactViewModel extends WalletViewModelBase {
 
     private static final String TAG = "AddAppContactViewModel";
-    private IPluginClient pluginClient_;
     private IAuthClient authClient_;
 
     private boolean scanning_;
@@ -22,19 +21,19 @@ public class AddAppContactViewModel extends ViewModel {
     private RPCAuthorize rpcAuthorize_;
 
     public AddAppContactViewModel() {
-        super();
+        super(TAG);
 
-        pluginClient_ = WalletServer.buildPluginClient();
         authClient_ = new AuthClient(WalletServer.getInstance().server());
 
         // create use cases
-        decodePayReq_ = new ActionDecodePayReq(pluginClient_);
+        decodePayReq_ = new ActionDecodePayReq(pluginClient());
         rpcAuthorize_ = new RPCAuthorize(authClient_);
     }
 
     @Override
     protected void onCleared() {
         decodePayReq_.destroy();
+        super.onCleared();
     }
 
     boolean isScanning() { return scanning_; }

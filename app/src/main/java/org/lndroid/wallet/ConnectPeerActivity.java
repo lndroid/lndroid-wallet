@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 
@@ -28,6 +28,7 @@ public class ConnectPeerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connect_peer);
 
         model_ = ViewModelProviders.of(this).get(ConnectPeerViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         pubkey_ = findViewById(R.id.pubkey);
         host_ = findViewById(R.id.host);

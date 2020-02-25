@@ -1,14 +1,14 @@
 package org.lndroid.wallet;
 
 import org.lndroid.framework.WalletData;
-import org.lndroid.framework.common.DefaultPlugins;
+import org.lndroid.framework.defaults.DefaultPlugins;
 import org.lndroid.framework.engine.IAuthComponentProvider;
 
 public class AuthComponentProvider implements IAuthComponentProvider {
 
     @Override
     public void assignAuthComponent(WalletData.AuthRequest.Builder b) {
-        if (b.pluginId().equals(DefaultPlugins.ADD_CONTACT_APP)) {
+        if (b.pluginId().equals(DefaultPlugins.ADD_APP_CONTACT)) {
             b.setComponentPackageName(AddAppContactActivity.class.getPackage().getName());
             b.setComponentClassName(AddAppContactActivity.class.getName());
         }

@@ -8,26 +8,23 @@ import org.lndroid.framework.WalletData;
 import org.lndroid.framework.client.IPluginClient;
 import org.lndroid.framework.usecases.ActionNewAddress;
 
-public class NewAddressViewModel extends ViewModel {
+public class NewAddressViewModel extends WalletViewModelBase {
 
     private static final String TAG = "NewAddressViewModel";
-    private IPluginClient pluginClient_;
 
     private ActionNewAddress newAddress_;
 
     public NewAddressViewModel() {
-        super();
-
-        pluginClient_ = WalletServer.buildPluginClient();
-        Log.i(TAG, "plugin client "+pluginClient_);
+        super(TAG);
 
         // create use cases
-        newAddress_ = new ActionNewAddress(pluginClient_);
+        newAddress_ = new ActionNewAddress(pluginClient());
     }
 
     @Override
     protected void onCleared() {
         newAddress_.destroy();
+        super.onCleared();
     }
 
     ActionNewAddress newAddress() { return newAddress_; }

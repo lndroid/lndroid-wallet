@@ -8,29 +8,28 @@ import org.lndroid.framework.engine.IAuthClient;
 import org.lndroid.framework.usecases.rpc.RPCAuthorize;
 import org.lndroid.framework.usecases.user.GetAuthRequestUser;
 
-public class AddListContactsPrivilegeViewModel extends ViewModel {
+public class AddListContactsPrivilegeViewModel extends WalletViewModelBase {
 
     private static final String TAG = "AddListContactsPrivVM";
-    private IPluginClient pluginClient_;
     private IAuthClient authClient_;
 
     private GetAuthRequestUser getAuthRequestUser_;
     private RPCAuthorize rpcAuthorize_;
 
     public AddListContactsPrivilegeViewModel() {
-        super();
+        super(TAG);
 
-        pluginClient_ = WalletServer.buildPluginClient();
         authClient_ = new AuthClient(WalletServer.getInstance().server());
 
         // create use cases
-        getAuthRequestUser_ = new GetAuthRequestUser(pluginClient_);
+        getAuthRequestUser_ = new GetAuthRequestUser(pluginClient());
         rpcAuthorize_ = new RPCAuthorize(authClient_);
     }
 
     @Override
     protected void onCleared() {
         getAuthRequestUser_.destroy();
+        super.onCleared();
     }
 
     GetAuthRequestUser getAuthRequestUser() { return getAuthRequestUser_; }

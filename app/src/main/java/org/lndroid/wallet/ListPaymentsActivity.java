@@ -23,6 +23,7 @@ public class ListPaymentsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_payments);
 
         model_ = ViewModelProviders.of(this).get(ListPaymentsViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         // set payment list request
         WalletData.ListPaymentsRequest listPaymentsReq = WalletData.ListPaymentsRequest.builder()

@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.user.ActionAddUser;
 import org.lndroid.framework.usecases.user.GetAppUser;
@@ -38,16 +38,17 @@ public class AppConnectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_connect);
 
-            Intent intent = getIntent();
-            appPubkey_ = intent.getStringExtra(EXTRA_APP_PUBKEY);
-            if (appPubkey_ == null || appPubkey_.isEmpty()) {
-                Log.e(TAG, "No app appPubkey");
-                setResult(RESULT_CANCELED);
-                finish();
-                return;
-            }
+        Intent intent = getIntent();
+        appPubkey_ = intent.getStringExtra(EXTRA_APP_PUBKEY);
+        if (appPubkey_ == null || appPubkey_.isEmpty()) {
+            Log.e(TAG, "No app appPubkey");
+            setResult(RESULT_CANCELED);
+            finish();
+            return;
+        }
 
         model_ = ViewModelProviders.of(this).get(AppConnectViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         TextView app = findViewById(R.id.app);
         Button confirm = findViewById(R.id.confirm);

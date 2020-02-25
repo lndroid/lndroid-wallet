@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.common.Errors;
 import org.lndroid.framework.usecases.IRequestFactory;
@@ -25,7 +25,7 @@ public class ShareContactActivity extends AppCompatActivity {
 
     private static final String TAG = "ShareContactActivity";
 
-    private int authRequestId_;
+    private long authRequestId_;
     private TextView state_;
     private EditText invoice_;
     private ImageView qrCode_;
@@ -39,9 +39,10 @@ public class ShareContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_share_contact);
 
         model_ = ViewModelProviders.of(this).get(ShareContactViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         Intent intent = getIntent();
-        authRequestId_ = intent.getIntExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
+        authRequestId_ = intent.getLongExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
         if (authRequestId_ == 0) {
             Log.e(TAG, "No auth request id");
             finish();

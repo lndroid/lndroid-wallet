@@ -4,10 +4,12 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.Errors;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.engine.AuthClient;
 import org.lndroid.framework.engine.IAuthClient;
@@ -23,10 +25,9 @@ import org.lndroid.framework.usecases.rpc.RPCInitWallet;
 import org.lndroid.framework.usecases.rpc.RPCUnlockWallet;
 import org.lndroid.framework.usecases.user.GetWalletInfo;
 
-public class MainViewModel extends ViewModel {
+public class MainViewModel extends WalletViewModelBase {
 
     private static final String TAG = "MainViewModel";
-    private IPluginClient pluginClient_;
     private IAuthClient authClient_;
 
     private MutableLiveData<WalletData.WalletState> walletState_ = new MutableLiveData<>();
@@ -38,10 +39,7 @@ public class MainViewModel extends ViewModel {
     private GetWalletInfo walletInfo_;
 
     public MainViewModel() {
-        super();
-
-        pluginClient_ = WalletServer.buildPluginClient();
-        Log.i(TAG, "plugin client "+pluginClient_);
+        super(TAG);
 
         authClient_ = new AuthClient(WalletServer.getInstance().server());
         Log.i(TAG, "auth client "+authClient_);
@@ -51,9 +49,9 @@ public class MainViewModel extends ViewModel {
         initWalletRPC_ = new RPCInitWallet(authClient_);
         genSeedRPC_ = new RPCGenSeed(authClient_);
 
-        walletBalance_ = new GetWalletBalance(pluginClient_);
-        channelBalance_ = new GetChannelBalance(pluginClient_);
-        walletInfo_ = new GetWalletInfo(pluginClient_);
+        walletBalance_ = new GetWalletBalance(pluginClient());
+        channelBalance_ = new GetChannelBalance(pluginClient());
+        walletInfo_ = new GetWalletInfo(pluginClient());
 
         // wallet state
         subscribeWalletState();
@@ -65,6 +63,8 @@ public class MainViewModel extends ViewModel {
         walletBalance_.destroy();
         channelBalance_.destroy();
         walletInfo_.destroy();
+
+        super.onCleared();
     }
 
     private void subscribeWalletBalance() {

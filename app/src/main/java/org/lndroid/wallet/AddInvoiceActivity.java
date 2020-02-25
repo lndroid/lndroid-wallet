@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.ActionAddInvoice;
 import org.lndroid.framework.usecases.IRequestFactory;
@@ -31,6 +31,7 @@ public class AddInvoiceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_invoice);
 
         model_ = ViewModelProviders.of(this).get(AddInvoiceViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         amount_ = findViewById(R.id.amount);
         description_ = findViewById(R.id.description);

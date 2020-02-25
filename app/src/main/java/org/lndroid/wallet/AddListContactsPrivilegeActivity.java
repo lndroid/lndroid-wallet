@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.lndroid.framework.IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.rpc.RPCAuthorize;
@@ -21,7 +21,7 @@ public class AddListContactsPrivilegeActivity extends AppCompatActivity {
 
     private static final String TAG = "AddListContactsPrivAct";
 
-    private int authRequestId_;
+    private long authRequestId_;
     private TextView state_;
     private TextView app_;
     private AddListContactsPrivilegeViewModel model_;
@@ -33,9 +33,10 @@ public class AddListContactsPrivilegeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_list_contacts_privilege);
 
         model_ = ViewModelProviders.of(this).get(AddListContactsPrivilegeViewModel.class);
+        model_.getSessionToken(getApplicationContext());
 
         Intent intent = getIntent();
-        authRequestId_ = intent.getIntExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
+        authRequestId_ = intent.getLongExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
         if (authRequestId_ == 0) {
             Log.e(TAG, "No auth request id");
             finish();
