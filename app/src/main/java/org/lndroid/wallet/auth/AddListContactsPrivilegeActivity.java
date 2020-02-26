@@ -1,6 +1,5 @@
-package org.lndroid.wallet;
+package org.lndroid.wallet.auth;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -11,29 +10,29 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.lndroid.framework.common .IResponseCallback;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.rpc.RPCAuthorize;
+import org.lndroid.framework.usecases.user.GetAuthRequestUser;
+import org.lndroid.wallet.Application;
+import org.lndroid.wallet.R;
+import org.lndroid.wallet.WalletServer;
 
-public class AddContactPaymentsPrivilegeActivity extends AppCompatActivity {
+public class AddListContactsPrivilegeActivity extends AuthActivityBase {
 
-    private static final String TAG = "AddContPaymentsPrivAct";
+    private static final String TAG = "AddListContactsPrivAct";
 
     private long authRequestId_;
     private TextView state_;
     private TextView app_;
-    private TextView contact_;
-    private AddContactPaymentsPrivilegeViewModel model_;
+    private AddListContactsPrivilegeViewModel model_;
     private boolean rejected_;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_contact_payments_privilege);
-
-        model_ = ViewModelProviders.of(this).get(AddContactPaymentsPrivilegeViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setContentView(R.layout.activity_add_list_contacts_privilege);
 
         Intent intent = getIntent();
         authRequestId_ = intent.getLongExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
@@ -43,11 +42,13 @@ public class AddContactPaymentsPrivilegeActivity extends AppCompatActivity {
             return;
         }
 
+        model_ = ViewModelProviders.of(this).get(AddListContactsPrivilegeViewModel.class);
+        setModel(model_);
+
         Button confirm = findViewById(R.id.confirm);
         Button cancel = findViewById(R.id.cancel);
         state_ = findViewById(R.id.state);
         app_ = findViewById(R.id.app);
-        contact_ = findViewById(R.id.contact);
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,33 +64,28 @@ public class AddContactPaymentsPrivilegeActivity extends AppCompatActivity {
             }
         });
 
-        state_.setText("Please wait...");
+        final GetAuthRequestUser getUser = model_.getAuthRequestUser();
+        if (!getUser.isActive()) {
+            getUser.setRequest(WalletData.GetRequestLong.builder()
+                    .setId((long) authRequestId_)
+                    .setNoAuth(true)
+                    .setSubscribe(true)
+                    .build());
+            getUser.start();
+        }
 
-        // let model load all required data
-        model_.start(authRequestId_);
-
-        model_.ready().observe(this, new Observer<Boolean>() {
+        getUser.data().observe(this, new Observer<WalletData.User>() {
             @Override
-            public void onChanged(Boolean ready) {
-                if (ready != null && ready == true) {
-                    app_.setText(model_.user().appLabel());
-                    contact_.setText(model_.contact().name());
-                    state_.setText("");
-                } else {
-                    app_.setText("");
-                    contact_.setText("");
-                    state_.setText("Please wait..");
-                }
+            public void onChanged(WalletData.User user) {
+                app_.setText(user.appLabel());
+                state_.setText("");
             }
         });
-
-        model_.error().observe(this, new Observer<WalletData.Error>() {
+        getUser.error().observe(this, new Observer<WalletData.Error>() {
             @Override
             public void onChanged(WalletData.Error error) {
-                if (error != null) {
-                    Log.e(TAG, "viewmodel error" + error);
-                    state_.setText("Error: " + error.message());
-                }
+                Log.e(TAG, "getAuthRequestUser error"+error);
+                state_.setText("Error: "+error.message());
             }
         });
 
@@ -106,15 +102,14 @@ public class AddContactPaymentsPrivilegeActivity extends AppCompatActivity {
                             .build();
                 } else {
 
-                    // make sure we wait until model is ready
-                    if (model_.ready().getValue() == null || model_.ready().getValue() == false)
+                    // make sure user can see the app User before confirm is allowed
+                    if (getUser.data().getValue() == null)
                         return null;
 
                     return WalletData.AuthResponse.builder()
                             .setAuthId(authRequestId_)
                             .setAuthorized(true)
                             .setAuthUserId(WalletServer.getInstance().getCurrentUserId().userId())
-                            .setData(model_.request().toBuilder().setCreateTime(System.currentTimeMillis()).build())
                             .build();
                 }
             }
@@ -143,12 +138,6 @@ public class AddContactPaymentsPrivilegeActivity extends AppCompatActivity {
     }
 
     private void sendResult(){
-        // if we already tried then just exit
-        if (model_.rpcAuthorize().request() != null) {
-            finish();
-            return;
-        }
-
         state_.setText("Please wait...");
         if (model_.rpcAuthorize().isExecuting())
             model_.rpcAuthorize().recover();
@@ -161,6 +150,12 @@ public class AddContactPaymentsPrivilegeActivity extends AppCompatActivity {
     }
 
     private void reject() {
+        // if we already tried then just exit
+        if (model_.rpcAuthorize().request() != null) {
+            finish();
+            return;
+        }
+
         rejected_ = true;
         sendResult();
     }

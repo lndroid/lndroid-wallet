@@ -14,7 +14,7 @@ import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 
-public class ConnectPeerActivity extends AppCompatActivity {
+public class ConnectPeerActivity extends WalletActivityBase {
     private static final String TAG = "ConnectPeerActivity";
 
     private EditText pubkey_;
@@ -28,7 +28,7 @@ public class ConnectPeerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connect_peer);
 
         model_ = ViewModelProviders.of(this).get(ConnectPeerViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setModel(model_);
 
         pubkey_ = findViewById(R.id.pubkey);
         host_ = findViewById(R.id.host);
@@ -41,11 +41,12 @@ public class ConnectPeerActivity extends AppCompatActivity {
             }
         });
 
-        model_.connectPeer().setCallback(this, new IResponseCallback<WalletData.ConnectPeerResponse>() {
+        model_.connectPeer().setCallback(this, new IResponseCallback<WalletData.Peer>() {
             @Override
-            public void onResponse(WalletData.ConnectPeerResponse r) {
+            public void onResponse(WalletData.Peer r) {
                 Log.i(TAG, "connecting "+r);
                 state_.setText("Request accepted.");
+                // FIXME show peer!
 //                finish();
             }
 
@@ -60,7 +61,7 @@ public class ConnectPeerActivity extends AppCompatActivity {
             public WalletData.ConnectPeerRequest create() {
                 return WalletData.ConnectPeerRequest.builder()
                         .setPubkey(pubkey_.getText().toString())
-                        .setHost(host_.getText().toString())
+                        .setAddress(host_.getText().toString())
                         .setPerm(true)
                         .build();
             }

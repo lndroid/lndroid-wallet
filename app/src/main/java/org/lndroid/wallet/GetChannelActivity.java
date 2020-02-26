@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import org.lndroid.framework.WalletData;
 
-public class GetChannelActivity extends AppCompatActivity {
+public class GetChannelActivity extends WalletActivityBase {
 
     private static final String TAG = "GetChannelActivity";
 
@@ -35,7 +35,7 @@ public class GetChannelActivity extends AppCompatActivity {
             throw new RuntimeException("Channel id not provided");
 
         model_ = ViewModelProviders.of(this).get(GetChannelViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setModel(model_);
 
 //        dateFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("en", "US"));
 

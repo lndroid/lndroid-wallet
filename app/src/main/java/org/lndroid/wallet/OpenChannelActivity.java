@@ -16,7 +16,7 @@ import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 
-public class OpenChannelActivity extends AppCompatActivity {
+public class OpenChannelActivity extends WalletActivityBase {
 
     private static final String TAG = "OpenChannelActivity";
 
@@ -33,7 +33,7 @@ public class OpenChannelActivity extends AppCompatActivity {
         setContentView(R.layout.activity_open_channel);
 
         model_ = ViewModelProviders.of(this).get(OpenChannelViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setModel(model_);
 
         pubkey_ = findViewById(R.id.pubkey);
         amount_ = findViewById(R.id.amount);

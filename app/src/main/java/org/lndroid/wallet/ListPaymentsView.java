@@ -17,9 +17,9 @@ import java.util.Locale;
 
 import org.lndroid.framework.WalletData;
 
-class PaymentListView {
+class ListPaymentsView {
 
-    public static class PaymentListViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView time_;
         private TextView type_;
         private TextView description_;
@@ -27,7 +27,7 @@ class PaymentListView {
         private DateFormat dateFormat_;
         private WalletData.Payment boundPayment_;
 
-        public PaymentListViewHolder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
 
             time_ = itemView.findViewById(R.id.time);
@@ -59,12 +59,6 @@ class PaymentListView {
                     type_.setText("Payment failed");
                     break;
                 case WalletData.SEND_PAYMENT_STATE_PENDING:
-                    if (p.nextTryTime() > 0)
-                        type_.setText("Retrying payment");
-                    else
-                        type_.setText("Sending payment");
-                    break;
-                case WalletData.SEND_PAYMENT_STATE_SENDING:
                     type_.setText("Sending payment");
                     break;
             }
@@ -104,9 +98,9 @@ class PaymentListView {
         }
     }
 
-    public static class PaymentListAdapter extends PagedListAdapter<WalletData.Payment, PaymentListViewHolder> {
+    public static class Adapter extends PagedListAdapter<WalletData.Payment, ViewHolder> {
 
-        protected PaymentListAdapter() {
+        protected Adapter() {
             super(DIFF_CALLBACK);
         }
 
@@ -118,7 +112,7 @@ class PaymentListView {
 
         @NonNull
         @Override
-        public PaymentListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             Context context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -128,11 +122,11 @@ class PaymentListView {
                 view.setOnClickListener(itemClickListener_);
 
             // Return a new holder instance
-            return new PaymentListViewHolder(view);
+            return new ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull PaymentListViewHolder holder,
+        public void onBindViewHolder(@NonNull ViewHolder holder,
                                      int position) {
             WalletData.Payment payment = getItem(position);
 

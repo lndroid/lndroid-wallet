@@ -19,7 +19,7 @@ import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 
-public class NewAddressActivity extends AppCompatActivity {
+public class NewAddressActivity extends WalletActivityBase {
 
     private static final String TAG = "NewAddressActivity";
 
@@ -34,7 +34,7 @@ public class NewAddressActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_address);
 
         model_ = ViewModelProviders.of(this).get(NewAddressViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setModel(model_);
 
         address_ = findViewById(R.id.address);
         state_ = findViewById(R.id.state);

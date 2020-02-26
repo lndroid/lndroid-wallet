@@ -1,6 +1,5 @@
 package org.lndroid.wallet;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
@@ -13,7 +12,7 @@ import android.view.View;
 
 import org.lndroid.framework.WalletData;
 
-public class ListPaymentsActivity extends AppCompatActivity {
+public class ListPaymentsActivity extends WalletActivityBase {
 
     private ListPaymentsViewModel model_;
 
@@ -23,7 +22,7 @@ public class ListPaymentsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_payments);
 
         model_ = ViewModelProviders.of(this).get(ListPaymentsViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setModel(model_);
 
         // set payment list request
         WalletData.ListPaymentsRequest listPaymentsReq = WalletData.ListPaymentsRequest.builder()
@@ -36,7 +35,7 @@ public class ListPaymentsActivity extends AppCompatActivity {
         model_.getPaymentListPager().setRequest(listPaymentsReq);
 
         // create list view adapter
-        final PaymentListView.PaymentListAdapter adapter = new PaymentListView.PaymentListAdapter();
+        final ListPaymentsView.Adapter adapter = new ListPaymentsView.Adapter();
 
         // subscribe adapter to model list updates
         model_.getPaymentListPager().pagedList().observe(this, new Observer<PagedList<WalletData.Payment>>() {
@@ -55,8 +54,8 @@ public class ListPaymentsActivity extends AppCompatActivity {
         adapter.setItemClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PaymentListView.PaymentListViewHolder viewHolder =
-                        (PaymentListView.PaymentListViewHolder)listView.findContainingViewHolder(view);
+                ListPaymentsView.ViewHolder viewHolder =
+                        (ListPaymentsView.ViewHolder)listView.findContainingViewHolder(view);
                 WalletData.Payment p = viewHolder.boundPayment();
                 if (p == null)
                     return;

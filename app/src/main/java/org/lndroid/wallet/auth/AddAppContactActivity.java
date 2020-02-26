@@ -1,6 +1,5 @@
-package org.lndroid.wallet;
+package org.lndroid.wallet.auth;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -11,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -21,8 +19,11 @@ import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.ActionDecodePayReq;
 import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.rpc.RPCAuthorize;
+import org.lndroid.wallet.Application;
+import org.lndroid.wallet.R;
+import org.lndroid.wallet.WalletServer;
 
-public class AddAppContactActivity extends AppCompatActivity {
+public class AddAppContactActivity extends AuthActivityBase {
 
     private static final String TAG = "AddAppContactActivity";
 
@@ -38,9 +39,6 @@ public class AddAppContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact_app);
 
-        model_ = ViewModelProviders.of(this).get(AddAppContactViewModel.class);
-        model_.getSessionToken(getApplicationContext());
-
         Intent intent = getIntent();
         authRequestId_ = intent.getLongExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
         if (authRequestId_ == 0) {
@@ -49,22 +47,15 @@ public class AddAppContactActivity extends AppCompatActivity {
             return;
         }
 
+        model_ = ViewModelProviders.of(this).get(AddAppContactViewModel.class);
+        setModel(model_);
+
         Button confirm = findViewById(R.id.confirm);
         Button cancel = findViewById(R.id.cancel);
         Button scan = findViewById(R.id.scan);
         payReq_ = findViewById(R.id.payreq);
         name_ = findViewById(R.id.name);
         state_ = findViewById(R.id.state);
-
-        model_.scanResult().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                if (s != null && !s.isEmpty()) {
-                    payReq_.setText(s);
-                    payReq_.setEnabled(false);
-                }
-            }
-        });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +73,16 @@ public class AddAppContactActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startScan();
+            }
+        });
+
+        model_.scanResult().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if (s != null && !s.isEmpty()) {
+                    payReq_.setText(s);
+                    payReq_.setEnabled(false);
+                }
             }
         });
 

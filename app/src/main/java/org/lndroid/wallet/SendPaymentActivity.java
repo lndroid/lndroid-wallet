@@ -16,7 +16,7 @@ import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.JobSendPayment;
 
-public class SendPaymentActivity extends AppCompatActivity {
+public class SendPaymentActivity extends WalletActivityBase {
 
     private static final String TAG = "SendPaymentActivity";
 
@@ -30,7 +30,7 @@ public class SendPaymentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_send_payment);
 
         model_ = ViewModelProviders.of(this).get(SendPaymentViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setModel(model_);
 
         payReq_ = findViewById(R.id.payReq);
         state_ = findViewById(R.id.state);

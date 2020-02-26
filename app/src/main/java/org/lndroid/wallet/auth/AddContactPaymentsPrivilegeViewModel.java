@@ -1,4 +1,4 @@
-package org.lndroid.wallet;
+package org.lndroid.wallet.auth;
 
 import android.util.Log;
 
@@ -16,6 +16,8 @@ import org.lndroid.framework.engine.IAuthClient;
 import org.lndroid.framework.usecases.GetContact;
 import org.lndroid.framework.usecases.rpc.RPCAuthorize;
 import org.lndroid.framework.usecases.user.GetAuthRequestUser;
+import org.lndroid.wallet.WalletServer;
+import org.lndroid.wallet.WalletViewModelBase;
 
 public class AddContactPaymentsPrivilegeViewModel extends WalletViewModelBase {
     private static final String TAG = "AddContactPaysPrivVM";

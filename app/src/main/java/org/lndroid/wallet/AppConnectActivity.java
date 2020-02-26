@@ -48,7 +48,16 @@ public class AppConnectActivity extends AppCompatActivity {
         }
 
         model_ = ViewModelProviders.of(this).get(AppConnectViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        model_.ensureSessionToken(getApplicationContext());
+        model_.authError().observe(this, new Observer<WalletData.Error>() {
+            @Override
+            public void onChanged(WalletData.Error error) {
+                if (error != null) {
+                    setResult(RESULT_CANCELED);
+                    finish();
+                }
+            }
+        });
 
         TextView app = findViewById(R.id.app);
         Button confirm = findViewById(R.id.confirm);

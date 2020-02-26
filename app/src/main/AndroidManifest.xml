@@ -17,22 +17,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PasswordAuthActivity"></activity>
+        <activity android:name=".GetPeerActivity"></activity>
+        <activity android:name=".ListPeersActivity" />
+        <activity android:name=".PasswordAuthActivity" />
         <activity android:name=".GetChannelActivity" />
         <activity android:name=".OpenChannelActivity" />
         <activity android:name=".NewAddressActivity" />
         <activity
-            android:name=".ShareContactActivity"
+            android:name=".auth.ShareContactActivity"
             android:exported="true" />
         <activity android:name=".ConnectPeerActivity" />
         <activity
-            android:name=".AddContactPaymentsPrivilegeActivity"
+            android:name=".auth.AddContactPaymentsPrivilegeActivity"
             android:exported="true" />
         <activity
-            android:name=".AddListContactsPrivilegeActivity"
+            android:name=".auth.AddListContactsPrivilegeActivity"
             android:exported="true" />
         <activity
-            android:name=".AddAppContactActivity"
+            android:name=".auth.AddAppContactActivity"
             android:exported="true" />
         <activity android:name=".AppConnectActivity">
             <intent-filter>

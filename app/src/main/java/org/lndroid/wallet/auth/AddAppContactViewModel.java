@@ -1,4 +1,4 @@
-package org.lndroid.wallet;
+package org.lndroid.wallet.auth;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -9,6 +9,8 @@ import org.lndroid.framework.engine.AuthClient;
 import org.lndroid.framework.engine.IAuthClient;
 import org.lndroid.framework.usecases.ActionDecodePayReq;
 import org.lndroid.framework.usecases.rpc.RPCAuthorize;
+import org.lndroid.wallet.WalletServer;
+import org.lndroid.wallet.WalletViewModelBase;
 
 public class AddAppContactViewModel extends WalletViewModelBase {
 

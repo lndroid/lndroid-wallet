@@ -16,8 +16,6 @@ import android.widget.TextView;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.common.Errors;
 import org.lndroid.framework.common.IResponseCallback;
-import org.lndroid.framework.usecases.ActionAddInvoice;
-import org.lndroid.framework.usecases.JobOpenChannel;
 import org.lndroid.framework.usecases.rpc.RPCGenSeed;
 import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.rpc.RPCInitWallet;
@@ -75,14 +73,18 @@ public class MainActivity extends FragmentActivity {
                 startSendPayment();
             }
         });
-
         button = (Button)findViewById(R.id.listPayments);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startListPayments();
             }
         });
-
+        button = (Button)findViewById(R.id.listPeers);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startListPeers();
+            }
+        });
         button = (Button)findViewById(R.id.connectPeer);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -329,6 +331,11 @@ public class MainActivity extends FragmentActivity {
 
     private void startConnectPeer() {
         Intent intent = new Intent(this, ConnectPeerActivity.class);
+        startActivity(intent);
+    }
+
+    private void startListPeers() {
+        Intent intent = new Intent(this, ListPeersActivity.class);
         startActivity(intent);
     }
 

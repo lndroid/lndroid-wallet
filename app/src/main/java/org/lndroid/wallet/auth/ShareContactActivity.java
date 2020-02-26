@@ -1,4 +1,4 @@
-package org.lndroid.wallet;
+package org.lndroid.wallet.auth;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -20,8 +20,11 @@ import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.common.Errors;
 import org.lndroid.framework.usecases.IRequestFactory;
+import org.lndroid.wallet.Application;
+import org.lndroid.wallet.R;
+import org.lndroid.wallet.WalletServer;
 
-public class ShareContactActivity extends AppCompatActivity {
+public class ShareContactActivity extends AuthActivityBase {
 
     private static final String TAG = "ShareContactActivity";
 
@@ -38,9 +41,6 @@ public class ShareContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_contact);
 
-        model_ = ViewModelProviders.of(this).get(ShareContactViewModel.class);
-        model_.getSessionToken(getApplicationContext());
-
         Intent intent = getIntent();
         authRequestId_ = intent.getLongExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
         if (authRequestId_ == 0) {
@@ -48,6 +48,9 @@ public class ShareContactActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        model_ = ViewModelProviders.of(this).get(ShareContactViewModel.class);
+        setModel(model_);
 
         final Button confirm = findViewById(R.id.confirm);
         cancel_ = findViewById(R.id.cancel);

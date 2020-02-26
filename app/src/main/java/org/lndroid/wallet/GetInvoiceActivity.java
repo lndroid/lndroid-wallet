@@ -15,7 +15,7 @@ import java.util.Locale;
 
 import org.lndroid.framework.WalletData;
 
-public class GetInvoiceActivity extends AppCompatActivity {
+public class GetInvoiceActivity extends WalletActivityBase {
 
     private static final String TAG = "GetInvoiceActivity";
 
@@ -38,7 +38,7 @@ public class GetInvoiceActivity extends AppCompatActivity {
         final long id = intent.getLongExtra(Application.ID_MESSAGE, 0);
 
         model_ = ViewModelProviders.of(this).get(GetInvoiceViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setModel(model_);
 
         dateFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("en", "US"));
 

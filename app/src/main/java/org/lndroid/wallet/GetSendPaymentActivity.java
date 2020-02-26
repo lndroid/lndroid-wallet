@@ -14,7 +14,7 @@ import java.util.Locale;
 
 import org.lndroid.framework.WalletData;
 
-public class GetSendPaymentActivity extends AppCompatActivity {
+public class GetSendPaymentActivity extends WalletActivityBase {
 
     private static final String TAG = "GetInvoiceActivity";
 
@@ -37,7 +37,7 @@ public class GetSendPaymentActivity extends AppCompatActivity {
         final long id = intent.getLongExtra(Application.ID_MESSAGE, 0);
 
         model_ = ViewModelProviders.of(this).get(GetSendPaymentViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setModel(model_);
 
         dateFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("en", "US"));
 
@@ -61,14 +61,7 @@ public class GetSendPaymentActivity extends AppCompatActivity {
                 sendTime_.setText("Sent: "+ (p.sendTime() > 0 ? dateFormat_.format(new Date(p.sendTime())) : ""));
                 switch (p.state()) {
                     case WalletData.SEND_PAYMENT_STATE_PENDING:
-                        long after = (p.nextTryTime() - System.currentTimeMillis()) / 1000;
-                        if (after > 0)
-                            state_.setText("State: sending, next try after "+after+" sec");
-                        else
-                            state_.setText("State: sending, next try now");
-                        break;
-                    case WalletData.SEND_PAYMENT_STATE_SENDING:
-                        state_.setText("State: sending now");
+                        state_.setText("State: sending");
                         break;
                     case WalletData.SEND_PAYMENT_STATE_OK:
                         state_.setText("State: sent");

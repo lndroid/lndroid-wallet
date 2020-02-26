@@ -16,7 +16,7 @@ import org.lndroid.framework.WalletData;
 import org.lndroid.framework.usecases.ActionAddInvoice;
 import org.lndroid.framework.usecases.IRequestFactory;
 
-public class AddInvoiceActivity extends AppCompatActivity {
+public class AddInvoiceActivity extends WalletActivityBase {
 
     private static final String TAG = "AddInvoiceActivity";
 
@@ -31,7 +31,7 @@ public class AddInvoiceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_invoice);
 
         model_ = ViewModelProviders.of(this).get(AddInvoiceViewModel.class);
-        model_.getSessionToken(getApplicationContext());
+        setModel(model_);
 
         amount_ = findViewById(R.id.amount);
         description_ = findViewById(R.id.description);
