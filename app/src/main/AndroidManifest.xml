@@ -17,7 +17,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GetPeerActivity"></activity>
+        <activity android:name=".GetContactActivity"></activity>
+        <activity android:name=".ListContactsActivity" />
+        <activity android:name=".GetUtxoActivity" />
+        <activity android:name=".ListUtxoActivity" />
+        <activity android:name=".ListInvoicesActivity" />
+        <activity android:name=".ListChannelsActivity" />
+        <activity android:name=".ListTransactionsActivity" />
+        <activity android:name=".GetTransactionActivity" />
+        <activity android:name=".SendCoinsActivity" />
+        <activity android:name=".GetPeerActivity" />
         <activity android:name=".ListPeersActivity" />
         <activity android:name=".PasswordAuthActivity" />
         <activity android:name=".GetChannelActivity" />

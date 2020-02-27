@@ -56,7 +56,7 @@ public class ListPaymentsActivity extends WalletActivityBase {
             public void onClick(View view) {
                 ListPaymentsView.ViewHolder viewHolder =
                         (ListPaymentsView.ViewHolder)listView.findContainingViewHolder(view);
-                WalletData.Payment p = viewHolder.boundPayment();
+                WalletData.Payment p = viewHolder.data();
                 if (p == null)
                     return;
 

@@ -19,13 +19,12 @@ import org.lndroid.framework.WalletData;
 
 class ListPaymentsView {
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends ListViewBase.ViewHolder<WalletData.Payment> {
         private TextView time_;
         private TextView type_;
         private TextView description_;
         private TextView amount_;
         private DateFormat dateFormat_;
-        private WalletData.Payment boundPayment_;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -38,7 +37,7 @@ class ListPaymentsView {
             dateFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("en", "US"));
         }
 
-        public void bindToInvoice(long pid, WalletData.Invoice i) {
+        public void fillInvoice(long pid, WalletData.Invoice i) {
             type_.setText("Received payment");
             amount_.setText("+"+i.amountPaidMsat()/1000+" sat");
             if (i.purpose() != null && !i.purpose().equals(""))
@@ -50,7 +49,7 @@ class ListPaymentsView {
             time_.setText(dateFormat_.format(new Date(i.settleTime())));
         }
 
-        public void bindToSendPayment(long pid, WalletData.SendPayment p) {
+        public void fillSendPayment(long pid, WalletData.SendPayment p) {
             switch (p.state()) {
                 case WalletData.SEND_PAYMENT_STATE_OK:
                     type_.setText("Sent payment");
@@ -73,24 +72,18 @@ class ListPaymentsView {
             time_.setText(dateFormat_.format(new Date(p.sendTime())));
         }
 
-        public void bindTo(WalletData.Payment p) {
-            boundPayment_= p;
-            switch (p.type()) {
+        protected void fillData() {
+            switch (data().type()) {
                 case WalletData.PAYMENT_TYPE_INVOICE:
-                    bindToInvoice(p.id(), p.invoices().get(p.sourceId()));
+                    fillInvoice(data().id(), data().invoices().get(data().sourceId()));
                     break;
                 case WalletData.PAYMENT_TYPE_SENDPAYMENT:
-                    bindToSendPayment(p.id(), p.sendPayments().get(p.sourceId()));
+                    fillSendPayment(data().id(), data().sendPayments().get(data().sourceId()));
                     break;
             }
         }
 
-        public WalletData.Payment boundPayment() {
-            return boundPayment_;
-        }
-
-        public void clear() {
-            boundPayment_ = null;
+        protected void clearData() {
             type_.setText("");
             description_.setText("");
             amount_.setText("");
@@ -98,87 +91,16 @@ class ListPaymentsView {
         }
     }
 
-    public static class Adapter extends PagedListAdapter<WalletData.Payment, ViewHolder> {
+    public static class Adapter extends ListViewBase.Adapter<WalletData.Payment, ViewHolder> {
 
         protected Adapter() {
-            super(DIFF_CALLBACK);
-        }
-
-        private View.OnClickListener itemClickListener_;
-
-        public void setItemClickListener (View.OnClickListener cl) {
-            itemClickListener_ = cl;
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            Context context = parent.getContext();
-            LayoutInflater inflater = LayoutInflater.from(context);
-
-            // Inflate the custom layout
-            View view = inflater.inflate(R.layout.list_payments, parent, false);
-            if (itemClickListener_ != null)
-                view.setOnClickListener(itemClickListener_);
-
-            // Return a new holder instance
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder,
-                                     int position) {
-            WalletData.Payment payment = getItem(position);
-
-            if (payment != null)
-                holder.bindTo(payment);
-            else
-                holder.clear();
-        }
-
-        private static DiffUtil.ItemCallback<WalletData.Payment> DIFF_CALLBACK
-                = new DiffUtil.ItemCallback<WalletData.Payment>() {
-            @Override
-            public boolean areItemsTheSame(
-                    @NonNull WalletData.Payment a, @NonNull WalletData.Payment b) {
-                return a.id() == b.id();
-            }
-
-            @Override
-            public boolean areContentsTheSame(
-                    @NonNull WalletData.Payment a, @NonNull WalletData.Payment b) {
-
-                return a.equals(b);
-/*
-                if (a.id() != b.id())
-                    return false;
-
-                if (a.type != b.type)
-                    return false;
-
-                if (a.sourceId != b.sourceId)
-                    return false;
-
-                // NOTE: adjust these based upon the visible list of fields
-                if (a.sendPayment != null) {
-                    return a.sendPayment.sendTime == b.sendPayment.sendTime
-                            && a.sendPayment.feeMsat == b.sendPayment.feeMsat
-                            && a.sendPayment.totalValueMsat == b.sendPayment.totalValueMsat
-                            && a.sendPayment.lastTryTime == b.sendPayment.lastTryTime
-                            && a.sendPayment.state == b.sendPayment.state;
-                } else if (a.invoice != null) {
-                    return a.invoice.settleIndex == b.invoice.settleIndex
-                            && a.invoice.amountPaidMsat == b.invoice.amountPaidMsat
-                            && a.invoice.authUserId == b.invoice.authUserId
-                            && a.invoice.settleTime == b.invoice.settleTime
-                            && a.invoice.htlcsCount == b.invoice.htlcsCount
-                            && a.invoice.state == b.invoice.state;
+            super(R.layout.list_payments, new ListViewBase.IViewHolderFactory<ViewHolder>() {
+                @Override
+                public ViewHolder create(View view) {
+                    return new ViewHolder(view);
                 }
-                return false;
-
- */
-            }
-        };
+            });
+        }
     }
 
 }

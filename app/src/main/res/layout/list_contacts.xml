@@ -8,37 +8,26 @@
     >
 
     <TextView
-        android:id="@+id/pubkey"
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pubkey"
+        android:text="Name"
         android:layout_marginStart="32dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-    />
+        />
 
     <TextView
-        android:id="@+id/address"
+        android:id="@+id/pubkey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Address"
+        android:text="Pubkey"
         android:layout_marginTop="10dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toStartOf="@+id/pubkey"
-        app:layout_constraintTop_toBottomOf="@+id/pubkey"
-    />
-
-    <TextView
-        android:id="@+id/state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="State"
-        android:layout_marginEnd="32dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/address"
-    />
+        app:layout_constraintStart_toStartOf="@id/name"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        />
 
     <View
         android:id="@+id/divider"
@@ -46,8 +35,8 @@
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintStart_toStartOf="@id/state"
-        app:layout_constraintTop_toBottomOf="@id/state"
+        app:layout_constraintStart_toStartOf="@id/pubkey"
+        app:layout_constraintTop_toBottomOf="@id/pubkey"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

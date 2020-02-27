@@ -114,13 +114,31 @@
                 app:layout_constraintTop_toBottomOf="@+id/listPeers" />
 
             <Button
+                android:id="@+id/sendCoins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Send coins"
+                app:layout_constraintStart_toStartOf="@+id/openChannel"
+                app:layout_constraintTop_toBottomOf="@+id/openChannel" />
+
+            <Button
+                android:id="@+id/listTransactions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="List transactions"
+                app:layout_constraintStart_toStartOf="@+id/sendCoins"
+                app:layout_constraintTop_toBottomOf="@+id/sendCoins" />
+
+            <Button
                 android:id="@+id/unlock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Unlock"
-                app:layout_constraintStart_toStartOf="@+id/openChannel"
-                app:layout_constraintTop_toBottomOf="@+id/openChannel" />
+                app:layout_constraintStart_toStartOf="@+id/listTransactions"
+                app:layout_constraintTop_toBottomOf="@+id/listTransactions" />
 
             <Button
                 android:id="@+id/initWallet"

@@ -13,40 +13,40 @@ import android.view.View;
 
 import org.lndroid.framework.WalletData;
 
-public class ListPeersActivity extends WalletActivityBase {
+public class ListUtxoActivity extends WalletActivityBase {
 
-    private ListPeersViewModel model_;
+    private ListUtxoViewModel model_;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_peers);
+        setContentView(R.layout.activity_list_utxo);
 
-        model_ = ViewModelProviders.of(this).get(ListPeersViewModel.class);
+        model_ = ViewModelProviders.of(this).get(ListUtxoViewModel.class);
         setModel(model_);
 
         // set payment list request
-        WalletData.ListPeersRequest req = WalletData.ListPeersRequest.builder()
+        WalletData.ListUtxoRequest req = WalletData.ListUtxoRequest.builder()
                 .setPage(WalletData.ListPage.builder().setCount(10).build())
-                .setSort("pubkey")
+                .setSort("id")
                 .setNoAuth(true)
                 .setEnablePaging(true)
                 .build();
-        model_.getPeerListPager().setRequest(req);
+        model_.getPager().setRequest(req);
 
         // create list view adapter
-        final ListPeersView.Adapter adapter = new ListPeersView.Adapter();
+        final ListUtxoView.Adapter adapter = new ListUtxoView.Adapter();
 
         // subscribe adapter to model list updates
-        model_.getPeerListPager().pagedList().observe(this, new Observer<PagedList<WalletData.Peer>>() {
+        model_.getPager().pagedList().observe(this, new Observer<PagedList<WalletData.Utxo>>() {
             @Override
-            public void onChanged(PagedList<WalletData.Peer> p) {
+            public void onChanged(PagedList<WalletData.Utxo> p) {
                 adapter.submitList(p);
             }
         });
 
         // set adapter to list view, init list layout
-        final RecyclerView listView = findViewById(R.id.peers);
+        final RecyclerView listView = findViewById(R.id.utxo);
         listView.setAdapter(adapter);
         listView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -54,17 +54,17 @@ public class ListPeersActivity extends WalletActivityBase {
         adapter.setItemClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ListPeersView.ViewHolder viewHolder =
-                        (ListPeersView.ViewHolder)listView.findContainingViewHolder(view);
-                WalletData.Peer p = viewHolder.data();
-                if (p != null)
-                    startGetPeer(p.id());
+                ListUtxoView.ViewHolder viewHolder =
+                        (ListUtxoView.ViewHolder)listView.findContainingViewHolder(view);
+                WalletData.Utxo t = viewHolder.data();
+                if (t != null)
+                    startGetUtxo(t.id());
             }
         });
     }
 
-    private void startGetPeer(long id) {
-        Intent intent = new Intent(this, GetPeerActivity.class);
+    private void startGetUtxo(long id) {
+        Intent intent = new Intent(this, GetUtxoActivity.class);
         intent.putExtra(Application.ID_MESSAGE, id);
         startActivity(intent);
     }

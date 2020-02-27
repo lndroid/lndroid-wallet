@@ -98,6 +98,18 @@ public class MainActivity extends FragmentActivity {
                 startOpenChannel();
             }
         });
+        button = (Button)findViewById(R.id.sendCoins);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startSendCoins();
+            }
+        });
+        button = (Button)findViewById(R.id.listTransactions);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startListTransactions();
+            }
+        });
 
         // watch state changes
         model_.walletState().observe(this, new Observer<WalletData.WalletState>() {
@@ -341,6 +353,16 @@ public class MainActivity extends FragmentActivity {
 
     private void startNewAddress() {
         Intent intent = new Intent(this, NewAddressActivity.class);
+        startActivity(intent);
+    }
+
+    private void startSendCoins() {
+        Intent intent = new Intent(this, SendCoinsActivity.class);
+        startActivity(intent);
+    }
+
+    private void startListTransactions() {
+        Intent intent = new Intent(this, ListTransactionsActivity.class);
         startActivity(intent);
     }
 
