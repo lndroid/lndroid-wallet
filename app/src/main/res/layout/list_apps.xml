@@ -8,7 +8,7 @@
     >
 
     <TextView
-        android:id="@+id/peer"
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -20,37 +20,14 @@
         />
 
     <TextView
-        android:id="@+id/capacity"
+        android:id="@+id/packageName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:text="Capacity"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/peer"
-        />
-
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Status"
+        android:text="Package name"
         android:layout_marginTop="5dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        app:layout_constraintStart_toStartOf="@id/peer"
-        app:layout_constraintTop_toBottomOf="@id/peer"
-        />
-
-
-    <TextView
-        android:id="@+id/balance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:text="Balance"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/status"
+        app:layout_constraintStart_toStartOf="@id/name"
+        app:layout_constraintTop_toBottomOf="@id/name"
         />
 
     <View
@@ -59,8 +36,8 @@
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintStart_toStartOf="@id/status"
-        app:layout_constraintTop_toBottomOf="@id/status"
+        app:layout_constraintStart_toStartOf="@id/packageName"
+        app:layout_constraintTop_toBottomOf="@id/packageName"
         />
 
 

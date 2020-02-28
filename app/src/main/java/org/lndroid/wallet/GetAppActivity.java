@@ -9,24 +9,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import org.lndroid.framework.WalletData;
 
-public class GetChannelActivity extends WalletActivityBase {
+public class GetAppActivity extends WalletActivityBase {
 
-    private GetChannelViewModel model_;
+    private GetAppViewModel model_;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_get_channel);
+        setContentView(R.layout.activity_get_app);
 
         Intent intent = getIntent();
         final long id = intent.getLongExtra(Application.ID_MESSAGE, 0);
 
-        model_ = ViewModelProviders.of(this).get(GetChannelViewModel.class);
+        model_ = ViewModelProviders.of(this).get(GetAppViewModel.class);
         setModel(model_);
 
         WalletData.GetRequestLong r = WalletData.GetRequestLong.builder()

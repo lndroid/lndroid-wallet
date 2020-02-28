@@ -29,16 +29,17 @@ public class GetPeerActivity extends WalletActivityBase {
 
         WalletData.GetRequestLong r = WalletData.GetRequestLong.builder()
                 .setSubscribe(true)
+                .setNoAuth(true)
                 .setId(id)
                 .build();
 
-        model_.getPeerPager().setRequest(r);
+        model_.getPager().setRequest(r);
 
         // create list view adapter
         final ListFieldsView.Adapter adapter = new ListFieldsView.Adapter();
 
         // subscribe adapter to model list updates
-        model_.getPeerPager().pagedList().observe(this, new Observer<PagedList<WalletData.Field>>() {
+        model_.getPager().pagedList().observe(this, new Observer<PagedList<WalletData.Field>>() {
             @Override
             public void onChanged(PagedList<WalletData.Field> fields) {
                 adapter.submitList(fields);

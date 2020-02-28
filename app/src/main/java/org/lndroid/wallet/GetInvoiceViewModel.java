@@ -12,23 +12,26 @@ public class GetInvoiceViewModel extends WalletViewModelBase {
 
     private static final String TAG = "GetInvoiceViewModel";
 
-    private GetInvoice getInvoice_;
+    private GetInvoice loader_;
+    private GetInvoice.Pager pager_;
 
     public GetInvoiceViewModel() {
         super(TAG);
 
         // create use cases
-        getInvoice_ = new GetInvoice(pluginClient());
+        loader_ = new GetInvoice(pluginClient());
+        pager_ = loader_.createPager();
     }
 
     @Override
     protected void onCleared() {
-        getInvoice_.destroy();
+        loader_.destroy();
         super.onCleared();
     }
 
-    void setGetInvoiceRequest(WalletData.GetRequestLong r) {
-        getInvoice().setRequest(r.toBuilder().setNoAuth(true).build());
-    }
-    GetInvoice getInvoice() { return getInvoice_; }
+    GetInvoice.Pager getPager() { return pager_; }
+
 }
+
+
+

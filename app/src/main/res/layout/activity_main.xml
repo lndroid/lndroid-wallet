@@ -50,23 +50,49 @@
                 app:layout_constraintTop_toBottomOf="@+id/blockchainBalance" />
 
             <Button
+                android:id="@+id/listApps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="List Apps"
+                app:layout_constraintStart_toStartOf="@+id/state"
+                app:layout_constraintTop_toBottomOf="@+id/state" />
+
+            <Button
+                android:id="@+id/addContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Add contact"
+                app:layout_constraintStart_toStartOf="@+id/listApps"
+                app:layout_constraintTop_toBottomOf="@+id/listApps" />
+
+            <Button
+                android:id="@+id/listContacts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="List contacts"
+                app:layout_constraintStart_toStartOf="@+id/addContact"
+                app:layout_constraintTop_toBottomOf="@+id/addContact" />
+
+            <Button
                 android:id="@+id/newAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="New address"
-                app:layout_constraintStart_toStartOf="@+id/state"
-                app:layout_constraintTop_toBottomOf="@+id/state" />
+                app:layout_constraintStart_toStartOf="@+id/listContacts"
+                app:layout_constraintTop_toBottomOf="@+id/listContacts" />
 
             <Button
-                android:id="@+id/sendPayment"
+                android:id="@+id/listUtxo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="Send payment"
+                android:text="List UTXO"
                 app:layout_constraintStart_toStartOf="@+id/newAddress"
-                app:layout_constraintTop_toBottomOf="@+id/newAddress"
-                />
+                app:layout_constraintTop_toBottomOf="@+id/newAddress" />
 
             <Button
                 android:id="@+id/addInvoice"
@@ -74,8 +100,27 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Add invoice"
-                app:layout_constraintStart_toStartOf="@+id/sendPayment"
-                app:layout_constraintTop_toBottomOf="@+id/sendPayment" />
+                app:layout_constraintStart_toStartOf="@+id/listUtxo"
+                app:layout_constraintTop_toBottomOf="@+id/listUtxo" />
+
+            <Button
+                android:id="@+id/listInvoices"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="List invoices"
+                app:layout_constraintStart_toStartOf="@+id/addInvoice"
+                app:layout_constraintTop_toBottomOf="@+id/addInvoice" />
+
+            <Button
+                android:id="@+id/sendPayment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Send payment"
+                app:layout_constraintStart_toStartOf="@+id/listInvoices"
+                app:layout_constraintTop_toBottomOf="@+id/listInvoices"
+                />
 
             <Button
                 android:id="@+id/listPayments"
@@ -83,8 +128,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="List payments"
-                app:layout_constraintStart_toStartOf="@+id/addInvoice"
-                app:layout_constraintTop_toBottomOf="@+id/addInvoice" />
+                app:layout_constraintStart_toStartOf="@+id/sendPayment"
+                app:layout_constraintTop_toBottomOf="@+id/sendPayment" />
 
             <Button
                 android:id="@+id/connectPeer"
@@ -114,13 +159,23 @@
                 app:layout_constraintTop_toBottomOf="@+id/listPeers" />
 
             <Button
+                android:id="@+id/listChannels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="List channels"
+                app:layout_constraintStart_toStartOf="@+id/openChannel"
+                app:layout_constraintTop_toBottomOf="@+id/openChannel" />
+
+
+            <Button
                 android:id="@+id/sendCoins"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Send coins"
-                app:layout_constraintStart_toStartOf="@+id/openChannel"
-                app:layout_constraintTop_toBottomOf="@+id/openChannel" />
+                app:layout_constraintStart_toStartOf="@+id/listChannels"
+                app:layout_constraintTop_toBottomOf="@+id/listChannels" />
 
             <Button
                 android:id="@+id/listTransactions"

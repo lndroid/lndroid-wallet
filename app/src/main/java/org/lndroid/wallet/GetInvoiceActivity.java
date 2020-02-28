@@ -3,6 +3,9 @@ package org.lndroid.wallet;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,16 +21,6 @@ import org.lndroid.framework.WalletData;
 
 public class GetInvoiceActivity extends WalletActivityBase {
 
-    private static final String TAG = "GetInvoiceActivity";
-
-    private TextView amount_;
-    private TextView description_;
-    private TextView createTime_;
-    private EditText payReq_;
-    private TextView amountPaid_;
-    private TextView settleTime_;
-    private DateFormat dateFormat_;
-
     private GetInvoiceViewModel model_;
 
     @Override
@@ -41,35 +34,28 @@ public class GetInvoiceActivity extends WalletActivityBase {
         model_ = ViewModelProviders.of(this).get(GetInvoiceViewModel.class);
         setModel(model_);
 
-        dateFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("en", "US"));
+        WalletData.GetRequestLong r = WalletData.GetRequestLong.builder()
+                .setSubscribe(true)
+                .setNoAuth(true)
+                .setId(id)
+                .build();
 
-        amount_ = findViewById(R.id.amount);
-        description_ = findViewById(R.id.description);
-        createTime_ = findViewById(R.id.createTime);
-        payReq_ = findViewById(R.id.payreq);
-        amountPaid_ = findViewById(R.id.amountPaid);
-        settleTime_ = findViewById(R.id.settleTime);
+        model_.getPager().setRequest(r);
 
-        model_.getInvoice().data().observe(this, new Observer<WalletData.Invoice>() {
+        // create list view adapter
+        final ListFieldsView.Adapter adapter = new ListFieldsView.Adapter();
+
+        // subscribe adapter to model list updates
+        model_.getPager().pagedList().observe(this, new Observer<PagedList<WalletData.Field>>() {
             @Override
-            public void onChanged(WalletData.Invoice invoice) {
-                amount_.setText("Amount: "+invoice.valueSat());
-                description_.setText("Description: "+invoice.description());
-                createTime_.setText("Created: "+ dateFormat_.format(new Date(invoice.createTime())));
-                payReq_.setText(invoice.paymentRequest());
-                amountPaid_.setText("Paid: "+invoice.amountPaidMsat() / 1000);
-                settleTime_.setText("Settled: "+ (invoice.settleTime() > 0
-                        ? dateFormat_.format(new Date(invoice.settleTime())) : ""));
+            public void onChanged(PagedList<WalletData.Field> fields) {
+                adapter.submitList(fields);
             }
         });
 
-        if (!model_.getInvoice().isActive()) {
-            WalletData.GetRequestLong r = WalletData.GetRequestLong.builder()
-                    .setSubscribe(true)
-                    .setId(id)
-                    .build();
-            model_.setGetInvoiceRequest(r);
-            model_.getInvoice().start();
-        }
+        // set adapter to list view, init list layout
+        final RecyclerView listView = findViewById(R.id.fields);
+        listView.setAdapter(adapter);
+        listView.setLayoutManager(new LinearLayoutManager(this));
     }
 }

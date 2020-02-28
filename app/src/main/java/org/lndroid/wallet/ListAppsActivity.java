@@ -13,40 +13,41 @@ import android.view.View;
 
 import org.lndroid.framework.WalletData;
 
-public class ListInvoicesActivity extends WalletActivityBase {
+public class ListAppsActivity extends WalletActivityBase {
 
-    private ListInvoicesViewModel model_;
+    private ListAppsViewModel model_;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_invoices);
+        setContentView(R.layout.activity_list_apps);
 
-        model_ = ViewModelProviders.of(this).get(ListInvoicesViewModel.class);
+        model_ = ViewModelProviders.of(this).get(ListAppsViewModel.class);
         setModel(model_);
 
         // set payment list request
-        WalletData.ListInvoicesRequest req = WalletData.ListInvoicesRequest.builder()
+        WalletData.ListUsersRequest req = WalletData.ListUsersRequest.builder()
                 .setPage(WalletData.ListPage.builder().setCount(10).build())
-                .setSort("id")
+                .setRole(WalletData.USER_ROLE_APP)
+                .setSort("name")
                 .setNoAuth(true)
                 .setEnablePaging(true)
                 .build();
         model_.getPager().setRequest(req);
 
         // create list view adapter
-        final ListInvoicesView.Adapter adapter = new ListInvoicesView.Adapter();
+        final ListAppsView.Adapter adapter = new ListAppsView.Adapter();
 
         // subscribe adapter to model list updates
-        model_.getPager().pagedList().observe(this, new Observer<PagedList<WalletData.Invoice>>() {
+        model_.getPager().pagedList().observe(this, new Observer<PagedList<WalletData.User>>() {
             @Override
-            public void onChanged(PagedList<WalletData.Invoice> p) {
+            public void onChanged(PagedList<WalletData.User> p) {
                 adapter.submitList(p);
             }
         });
 
         // set adapter to list view, init list layout
-        final RecyclerView listView = findViewById(R.id.invoices);
+        final RecyclerView listView = findViewById(R.id.apps);
         listView.setAdapter(adapter);
         listView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -54,17 +55,17 @@ public class ListInvoicesActivity extends WalletActivityBase {
         adapter.setItemClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ListInvoicesView.ViewHolder viewHolder =
-                        (ListInvoicesView.ViewHolder)listView.findContainingViewHolder(view);
-                WalletData.Invoice p = viewHolder.data();
+                ListAppsView.ViewHolder viewHolder =
+                        (ListAppsView.ViewHolder)listView.findContainingViewHolder(view);
+                WalletData.User p = viewHolder.data();
                 if (p != null)
-                    startGetInvoice(p.id());
+                    startGetApp(p.id());
             }
         });
     }
 
-    private void startGetInvoice(long id) {
-        Intent intent = new Intent(this, GetInvoiceActivity.class);
+    private void startGetApp(long id) {
+        Intent intent = new Intent(this, GetAppActivity.class);
         intent.putExtra(Application.ID_MESSAGE, id);
         startActivity(intent);
     }

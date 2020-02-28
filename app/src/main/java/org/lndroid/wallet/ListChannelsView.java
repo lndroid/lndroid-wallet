@@ -59,7 +59,7 @@ public class ListChannelsView {
     public static class Adapter extends ListViewBase.Adapter<WalletData.Channel, ViewHolder> {
 
         protected Adapter() {
-            super(R.layout.list_peers, new ListViewBase.IViewHolderFactory<ViewHolder>() {
+            super(R.layout.list_channels, new ListViewBase.IViewHolderFactory<ViewHolder>() {
                 @Override
                 public ViewHolder create(View view) {
                     return new ViewHolder(view);

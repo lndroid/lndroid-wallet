@@ -12,23 +12,25 @@ public class GetChannelViewModel extends WalletViewModelBase {
 
     private static final String TAG = "GetChannelViewModel";
 
-    private GetChannel getChannel_;
+    private GetChannel loader_;
+    private GetChannel.Pager pager_;
 
     public GetChannelViewModel() {
         super(TAG);
 
         // create use cases
-        getChannel_ = new GetChannel(pluginClient());
+        loader_ = new GetChannel(pluginClient());
+        pager_ = loader_.createPager();
     }
 
     @Override
     protected void onCleared() {
-        getChannel_.destroy();
+        loader_.destroy();
         super.onCleared();
     }
 
-    void setChannelRequest(WalletData.GetRequestLong r) {
-        getChannel_.setRequest(r.toBuilder().setNoAuth(true).build());
-    }
-    GetChannel getChannel() { return getChannel_; }
+    GetChannel.Pager getPager() { return pager_; }
+
 }
+
+

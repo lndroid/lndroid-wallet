@@ -6,6 +6,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -23,8 +24,8 @@ public class ListFieldsView {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView name_;
         private EditText value_;
-        private ImageButton help_;
-        private ImageButton copy_;
+        private Button help_;
+        private Button copy_;
         private WalletData.Field field_;
 
         public ViewHolder(final View itemView) {
@@ -38,7 +39,7 @@ public class ListFieldsView {
             help_.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(view.getContext(), field_.help(), 10);
+                    Toast.makeText(view.getContext(), field_.help(), Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -49,6 +50,7 @@ public class ListFieldsView {
                             Context.CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText(field_.name(), field_.value());
                     clipboard.setPrimaryClip(clip);
+                    Toast.makeText(view.getContext(), "Copied to clipboard", Toast.LENGTH_SHORT).show();
                 }
             });
 

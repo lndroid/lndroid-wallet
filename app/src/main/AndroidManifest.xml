@@ -17,7 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GetContactActivity"></activity>
+        <activity android:name=".ListAppsActivity"></activity>
+        <activity android:name=".GetAppActivity" />
+        <activity android:name=".GetContactActivity" />
         <activity android:name=".ListContactsActivity" />
         <activity android:name=".GetUtxoActivity" />
         <activity android:name=".ListUtxoActivity" />

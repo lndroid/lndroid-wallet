@@ -78,6 +78,7 @@ public class GetSendPaymentActivity extends WalletActivityBase {
         if (!model_.getSendPayment().isActive()) {
             WalletData.GetRequestLong r = WalletData.GetRequestLong.builder()
                     .setSubscribe(true)
+                    .setNoAuth(true)
                     .setId(id)
                     .build();
             model_.setSendPaymentRequest(r);

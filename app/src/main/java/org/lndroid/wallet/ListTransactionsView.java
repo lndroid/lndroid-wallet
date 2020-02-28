@@ -37,11 +37,11 @@ public class ListTransactionsView {
                 hash = hash.substring(0, 6) + "..." + hash.substring(hash.length() - 6);
             hash_.setText(hash);
             amount_.setText(Long.toString(data().amount()));
-            fee_.setText("-"+data().totalFees());
+            fee_.setText("Fee: "+(data().totalFees() > 0 ? "-"+data().totalFees() : "0"));
             time_.setText(dateFormat_.format(new Date(
                     data().timestamp() != 0
-                            ? data().timestamp()
-                            : data().createTime() / 1000)));
+                            ? data().timestamp() * 1000
+                            : data().createTime())));
             if (data().numConfirmations() == 0)
                 confs_.setText("Unconfirmed");
             else

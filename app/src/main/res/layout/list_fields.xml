@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="15dp"
     >
 
     <TextView
@@ -12,14 +11,43 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Field name"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="20dp"
         android:textStyle="bold"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <ImageButton
+    <Button
+        android:id="@+id/help"
+        style="@style/Widget.AppCompat.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="28dp"
+        android:minWidth="28dp"
+        android:textSize="12sp"
+        android:text="?"
+        app:layout_constraintStart_toEndOf="@id/name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/value"
+        />
+
+    <Button
+        android:id="@+id/copy"
+        style="@style/Widget.AppCompat.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="28dp"
+        android:minWidth="28dp"
+        android:textSize="12sp"
+        android:gravity="bottom"
+        android:text="C"
+        app:layout_constraintStart_toEndOf="@id/help"
+        app:layout_constraintBottom_toBottomOf="@id/help" />
+
+
+    <!-- ImageButton
         android:id="@+id/help"
         android:layout_width="24dp"
         android:layout_height="26dp"
@@ -27,35 +55,38 @@
         android:padding="-1dp"
         android:paddingTop="-3dp"
         android:scaleType="centerInside"
+        android:alpha="1"
         app:layout_constraintBottom_toBottomOf="@id/name"
         app:layout_constraintStart_toEndOf="@id/name"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_help" />
+        app:srcCompat="@drawable/ic_help" /-->
 
     <EditText
         android:id="@+id/value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="none"
+        android:editable="false"
         android:textIsSelectable="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginEnd="20dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name"
-        app:layout_constraintEnd_toStartOf="@+id/copy"
         />
 
-    <ImageButton
+    <!-- ImageButton
         android:id="@+id/copy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="20dp"
         app:srcCompat="@drawable/ic_copy"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/value"
-        />
-
+        /-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

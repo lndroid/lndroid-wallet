@@ -16,6 +16,7 @@ import android.widget.TextView;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.common.Errors;
 import org.lndroid.framework.common.IResponseCallback;
+import org.lndroid.framework.usecases.ListContacts;
 import org.lndroid.framework.usecases.rpc.RPCGenSeed;
 import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.rpc.RPCInitWallet;
@@ -55,16 +56,46 @@ public class MainActivity extends FragmentActivity {
                 initWallet();
             }
         });
+        button = findViewById(R.id.listApps);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startListApps();
+            }
+        });
+        button = findViewById(R.id.addContact);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startAddContact();
+            }
+        });
+        button = findViewById(R.id.listContacts);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startListContacts();
+            }
+        });
         button = findViewById(R.id.newAddress);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startNewAddress();
             }
         });
+        button = findViewById(R.id.listUtxo);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startListUtxo();
+            }
+        });
         button = findViewById(R.id.addInvoice);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startAddInvoice();
+            }
+        });
+        button = findViewById(R.id.listInvoices);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startListInvoices();
             }
         });
         button = (Button)findViewById(R.id.sendPayment);
@@ -79,16 +110,16 @@ public class MainActivity extends FragmentActivity {
                 startListPayments();
             }
         });
-        button = (Button)findViewById(R.id.listPeers);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startListPeers();
-            }
-        });
         button = (Button)findViewById(R.id.connectPeer);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startConnectPeer();
+            }
+        });
+        button = (Button)findViewById(R.id.listPeers);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startListPeers();
             }
         });
 
@@ -96,6 +127,12 @@ public class MainActivity extends FragmentActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startOpenChannel();
+            }
+        });
+        button = (Button)findViewById(R.id.listChannels);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startListChannels();
             }
         });
         button = (Button)findViewById(R.id.sendCoins);
@@ -370,4 +407,35 @@ public class MainActivity extends FragmentActivity {
         Intent intent = new Intent(this, OpenChannelActivity.class);
         startActivity(intent);
     }
+
+    private void startListApps() {
+        Intent intent = new Intent(this, ListAppsActivity.class);
+        startActivity(intent);
+    }
+
+    private void startAddContact() {
+//        Intent intent = new Intent(this, ListAppsActivity.class);
+//        startActivity(intent);
+    }
+
+    private void startListContacts() {
+        Intent intent = new Intent(this, ListContactsActivity.class);
+        startActivity(intent);
+    }
+
+    private void startListUtxo() {
+        Intent intent = new Intent(this, ListUtxoActivity.class);
+        startActivity(intent);
+    }
+
+    private void startListChannels() {
+        Intent intent = new Intent(this, ListChannelsActivity.class);
+        startActivity(intent);
+    }
+
+    private void startListInvoices() {
+        Intent intent = new Intent(this, ListInvoicesActivity.class);
+        startActivity(intent);
+    }
+
 }
