@@ -56,6 +56,12 @@ public class MainActivity extends FragmentActivity {
                 initWallet();
             }
         });
+        button = findViewById(R.id.walletInfo);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startGetWalletInfo();
+            }
+        });
         button = findViewById(R.id.listApps);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -435,6 +441,11 @@ public class MainActivity extends FragmentActivity {
 
     private void startListInvoices() {
         Intent intent = new Intent(this, ListInvoicesActivity.class);
+        startActivity(intent);
+    }
+
+    private void startGetWalletInfo() {
+        Intent intent = new Intent(this, GetWalletInfoActivity.class);
         startActivity(intent);
     }
 

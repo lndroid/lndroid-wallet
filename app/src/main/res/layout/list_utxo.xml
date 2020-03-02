@@ -14,7 +14,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginStart="20dp"
         android:text="Outpoint"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />

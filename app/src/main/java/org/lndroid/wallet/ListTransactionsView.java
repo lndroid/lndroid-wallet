@@ -32,7 +32,7 @@ public class ListTransactionsView {
 
         @Override
         protected void fillData() {
-            String hash = data().txHash();
+            String hash = data().txHash() != null ? data().txHash() : "";
             if (hash.length() > 12)
                 hash = hash.substring(0, 6) + "..." + hash.substring(hash.length() - 6);
             hash_.setText(hash);

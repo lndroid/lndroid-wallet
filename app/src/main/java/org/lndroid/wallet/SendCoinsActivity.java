@@ -102,11 +102,19 @@ public class SendCoinsActivity extends WalletActivityBase {
                 if (address_.getText().toString().isEmpty())
                     return null;
 
+                long amount = 0;
+                int confs = 0;
+                try {
+                    amount = Long.parseLong(amount_.getText().toString());
+                    confs = Integer.parseInt(confs_.getText().toString());
+                } catch (NumberFormatException e) {
+                }
+
                 ImmutableMap.Builder<String, Long> b = ImmutableMap.builder();
-                b.put(address_.getText().toString(), Long.parseLong(amount_.getText().toString()));
+                b.put(address_.getText().toString(), amount);
 
                 return WalletData.SendCoinsRequest.builder()
-                        .setTargetConf(Integer.parseInt(confs_.getText().toString()))
+                        .setTargetConf(confs)
                         .setAddrToAmount(b.build())
                         .build();
             }
@@ -133,11 +141,24 @@ public class SendCoinsActivity extends WalletActivityBase {
                 if (address_.getText().toString().isEmpty())
                     return null;
 
+                long amount = 0;
+                int confs = 0;
+                try {
+                    amount = Long.parseLong(amount_.getText().toString());
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+
+                try {
+                    confs = Integer.parseInt(confs_.getText().toString());
+                } catch (NumberFormatException e) {
+                }
+
                 ImmutableMap.Builder<String, Long> b = ImmutableMap.builder();
-                b.put(address_.getText().toString(), Long.parseLong(amount_.getText().toString()));
+                b.put(address_.getText().toString(), amount);
 
                 return WalletData.EstimateFeeRequest.builder()
-                        .setTargetConf(Integer.parseInt(confs_.getText().toString()))
+                        .setTargetConf(confs)
                         .setAddrToAmount(b.build())
                         .build();
             }

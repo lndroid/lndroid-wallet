@@ -20,6 +20,7 @@ public class SendCoinsViewModel extends WalletViewModelBase {
 
         // create use cases
         sendCoins_ = new JobSendCoins(pluginClient());
+        estimateFee_ = new ActionEstimateFee(pluginClient());
     }
 
     @Override
