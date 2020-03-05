@@ -12,23 +12,25 @@ public class GetSendPaymentViewModel extends WalletViewModelBase {
 
     private static final String TAG = "GetSendPaymentViewModel";
 
-    private GetSendPayment getSendPayment_;
+
+    private GetSendPayment loader_;
+    private GetSendPayment.Pager pager_;
 
     public GetSendPaymentViewModel() {
         super(TAG);
 
         // create use cases
-        getSendPayment_ = new GetSendPayment(pluginClient());
+        loader_ = new GetSendPayment(pluginClient());
+        pager_ = loader_.createPager();
     }
 
     @Override
     protected void onCleared() {
-        getSendPayment_.destroy();
+        loader_.destroy();
         super.onCleared();
     }
 
-    void setSendPaymentRequest(WalletData.GetRequestLong r) {
-        getSendPayment().setRequest(r.toBuilder().setNoAuth(true).build());
-    }
-    GetSendPayment getSendPayment() { return getSendPayment_; }
+    GetSendPayment.Pager getPager() { return pager_; }
+
 }
+

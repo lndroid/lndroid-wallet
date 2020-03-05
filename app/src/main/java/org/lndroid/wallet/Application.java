@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.soloader.SoLoader;
 
 import org.lndroid.framework.client.IPluginClient;
+import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.usecases.bg.RecvPaymentWorker;
 import org.lndroid.framework.usecases.bg.SendPaymentService;
 import org.lndroid.framework.usecases.bg.SyncWorker;
@@ -104,7 +106,7 @@ public class Application extends MultiDexApplication {
 
         // start payment service to keep app in bg while pending payments
         // are retried
-        SendPaymentService ps = SendPaymentService.getInstance();
+        final SendPaymentService ps = SendPaymentService.getInstance();
         ps.setContext(this);
         ps.setNotificationFactory(new SendPaymentService.INofiticationFactory() {
             @Override
@@ -132,7 +134,23 @@ public class Application extends MultiDexApplication {
                         .build();
             }
         });
-        ps.start(WalletServer.buildPluginClient());
+
+        final IPluginClient client = WalletServer.buildPluginClient();
+        WalletServer.getInstance().getSessionToken(this, new IResponseCallback<String>() {
+            @Override
+            public void onResponse(String s) {
+                client.setSessionToken(s);
+                ps.start(client);
+            }
+
+            @Override
+            public void onError(String s, String s1) {
+                Log.e("SendPaymentService", "Failed to get session token: " + s);
+                // FIXME now what? Instead of root, use Guest role which should
+                //  have NONE as auth type and thus session token should always be available
+                //  OR maybe it's not even required
+            }
+        });
     }
 
     private void createNotificationChannel() {

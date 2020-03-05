@@ -420,8 +420,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void startAddContact() {
-//        Intent intent = new Intent(this, ListAppsActivity.class);
-//        startActivity(intent);
+        Intent intent = new Intent(this, AddContactActivity.class);
+        startActivity(intent);
     }
 
     private void startListContacts() {

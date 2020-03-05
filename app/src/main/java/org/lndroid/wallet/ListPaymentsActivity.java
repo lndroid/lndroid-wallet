@@ -27,7 +27,7 @@ public class ListPaymentsActivity extends WalletActivityBase {
         // set payment list request
         WalletData.ListPaymentsRequest listPaymentsReq = WalletData.ListPaymentsRequest.builder()
                 .setPage(WalletData.ListPage.builder().setCount(10).build())
-                .setSort("time")
+                .setSort("id")
                 .setSortDesc(true)
                 .setNoAuth(true)
                 .setEnablePaging(true)

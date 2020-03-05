@@ -20,10 +20,24 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:text="New Blockchain Address"
+                android:text="New on-chain address"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/copy"
+                style="@style/Widget.AppCompat.Button.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:minHeight="28dp"
+                android:minWidth="28dp"
+                android:textSize="12sp"
+                android:gravity="bottom"
+                android:text="C"
+                app:layout_constraintStart_toEndOf="@id/title"
+                app:layout_constraintBottom_toBottomOf="@id/title" />
 
             <EditText
                 android:id="@+id/address"

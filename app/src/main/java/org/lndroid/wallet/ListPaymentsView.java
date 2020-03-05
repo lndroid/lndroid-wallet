@@ -20,10 +20,10 @@ import org.lndroid.framework.WalletData;
 class ListPaymentsView {
 
     public static class ViewHolder extends ListViewBase.ViewHolder<WalletData.Payment> {
+        private TextView amount_;
+        private TextView fee_;
         private TextView time_;
         private TextView type_;
-        private TextView description_;
-        private TextView amount_;
         private DateFormat dateFormat_;
 
         public ViewHolder(View itemView) {
@@ -31,45 +31,46 @@ class ListPaymentsView {
 
             time_ = itemView.findViewById(R.id.time);
             type_ = itemView.findViewById(R.id.type);
-            description_ = itemView.findViewById(R.id.description);
             amount_ = itemView.findViewById(R.id.amount);
+            fee_ = itemView.findViewById(R.id.fee);
 
             dateFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("en", "US"));
         }
 
         public void fillInvoice(long pid, WalletData.Invoice i) {
-            type_.setText("Received payment");
-            amount_.setText("+"+i.amountPaidMsat()/1000+" sat");
-            if (i.purpose() != null && !i.purpose().equals(""))
-                description_.setText(i.purpose());
-            else if (i.description() != null && !i.description().equals(""))
-                description_.setText(i.description());
+            if (i.message() != null)
+                type_.setText("Message");
+            else if (i.isKeysend())
+                type_.setText("Key-send");
             else
-                description_.setText("No description");
+                type_.setText("Invoice");
+            amount_.setText("+"+i.amountPaidMsat()/1000+" sat");
+            fee_.setText("");
             time_.setText(dateFormat_.format(new Date(i.settleTime())));
         }
 
         public void fillSendPayment(long pid, WalletData.SendPayment p) {
+            if (p.message() != null)
+                type_.setText("Message");
+            else if (p.isKeysend())
+                type_.setText("Key-send");
+            else
+                type_.setText("Invoice");
+            amount_.setText("-"+p.valueMsat()/1000+" sat");
+            fee_.setText("Fee: "+p.feeMsat());
+
             switch (p.state()) {
                 case WalletData.SEND_PAYMENT_STATE_OK:
-                    type_.setText("Sent payment");
+                    time_.setText(dateFormat_.format(new Date(p.sendTime())));
                     break;
                 case WalletData.SEND_PAYMENT_STATE_FAILED:
-                    type_.setText("Payment failed");
+                    time_.setText("Failed");
                     break;
                 case WalletData.SEND_PAYMENT_STATE_PENDING:
-                    type_.setText("Sending payment");
+                    time_.setText("Sending");
                     break;
             }
 
-            amount_.setText("-"+p.valueMsat()/1000+" sat");
-            if (p.purpose() != null && !p.purpose().equals(""))
-                description_.setText(p.purpose());
-            else if (p.invoiceDescription() != null && !p.invoiceDescription().equals(""))
-                description_.setText(p.invoiceDescription());
-            else
-                description_.setText("No description");
-            time_.setText(dateFormat_.format(new Date(p.sendTime())));
         }
 
         protected void fillData() {
@@ -85,7 +86,7 @@ class ListPaymentsView {
 
         protected void clearData() {
             type_.setText("");
-            description_.setText("");
+            fee_.setText("");
             amount_.setText("");
             time_.setText("");
         }

@@ -37,7 +37,7 @@ public class AddAppContactActivity extends AuthActivityBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_contact_app);
+        setContentView(R.layout.activity_add_app_contact);
 
         Intent intent = getIntent();
         authRequestId_ = intent.getLongExtra(Application.EXTRA_AUTH_REQUEST_ID, 0);
@@ -76,6 +76,34 @@ public class AddAppContactActivity extends AuthActivityBase {
             }
         });
 
+        state_.setText("Please wait...");
+
+        // let model load all required data
+        model_.start(authRequestId_);
+
+        model_.ready().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean ready) {
+                if (ready != null && ready == true) {
+                    name_.setText(model_.request().name());
+                    state_.setText("");
+                } else {
+                    name_.setText("");
+                }
+            }
+        });
+
+        model_.error().observe(this, new Observer<WalletData.Error>() {
+            @Override
+            public void onChanged(WalletData.Error error) {
+                if (error != null) {
+                    Log.e(TAG, "viewmodel error" + error);
+                    state_.setText("Error: " + error.message());
+                }
+            }
+        });
+
+
         model_.scanResult().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
@@ -91,7 +119,6 @@ public class AddAppContactActivity extends AuthActivityBase {
             @Override
             public void onResponse(WalletData.SendPayment r) {
                 Log.i(TAG, "invoice " + r);
-                // FIXME instead, show all fields prefilled and let user update them?
                 confirm();
             }
 
@@ -128,7 +155,7 @@ public class AddAppContactActivity extends AuthActivityBase {
 
                     ActionDecodePayReq payReq = model_.decodePayReq();
 
-                    WalletData.Contact r = WalletData.Contact.builder()
+                    WalletData.AddContactRequest r = WalletData.AddContactRequest.builder()
                             .setPubkey(payReq.response().destPubkey())
                             .setName(name_.getText().toString())
                             .setRouteHints(payReq.response().routeHints())

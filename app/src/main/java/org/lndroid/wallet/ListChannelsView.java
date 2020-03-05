@@ -34,6 +34,8 @@ public class ListChannelsView {
                 status_.setText("Active");
             else if (data().state() == WalletData.CHANNEL_STATE_OPEN)
                 status_.setText("Open");
+            else if (data().state() == WalletData.CHANNEL_STATE_PENDING_OPEN)
+                status_.setText("Opening");
             else if (data().state() == WalletData.CHANNEL_STATE_FAILED)
                 status_.setText("Failed to open");
             else if (data().state() == WalletData.CHANNEL_STATE_CLOSED)
@@ -42,6 +44,9 @@ public class ListChannelsView {
                 status_.setText("Opening");
             else
                 status_.setText("Closing");
+
+            if (data().isPrivate())
+                status_.setText(status_.getText().toString()+ ", private");
 
             String balance = "In "+data().remoteBalance()+" / Out "+data().localBalance();
             balance_.setText(balance);

@@ -3,6 +3,7 @@ package org.lndroid.wallet;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,8 +47,8 @@ public class ConnectPeerActivity extends WalletActivityBase {
             public void onResponse(WalletData.Peer r) {
                 Log.i(TAG, "connecting "+r);
                 state_.setText("Request accepted.");
-                // FIXME show peer!
-//                finish();
+                startGetPeer(r.id());
+                finish();
             }
 
             @Override
@@ -83,4 +84,11 @@ public class ConnectPeerActivity extends WalletActivityBase {
         else
             model_.connectPeer().execute("");
     }
+
+    private void startGetPeer(long id) {
+        Intent intent = new Intent(this, GetPeerActivity.class);
+        intent.putExtra(Application.ID_MESSAGE, id);
+        startActivity(intent);
+    }
+
 }

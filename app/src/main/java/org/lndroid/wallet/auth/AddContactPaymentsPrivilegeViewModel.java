@@ -61,8 +61,7 @@ public class AddContactPaymentsPrivilegeViewModel extends WalletViewModelBase {
     }
 
     private void getRequest() {
-        authClient_.getTransactionRequest(DefaultPlugins.ADD_CONTACT_PAYMENTS_PRIVILEGE,
-                authRequest_.userId(), authRequest_.txId(),
+        authClient_.getAuthTransactionRequest(authRequestId_, WalletData.ContactPaymentsPrivilege.class,
                 new IResponseCallback<WalletData.ContactPaymentsPrivilege>() {
                     @Override
                     public void onResponse(WalletData.ContactPaymentsPrivilege r) {
@@ -72,7 +71,7 @@ public class AddContactPaymentsPrivilegeViewModel extends WalletViewModelBase {
 
                     @Override
                     public void onError(String code, String e) {
-                        setError("getTransactionRequestUser", code, e);
+                        setError("getTransactionRequest error", code, e);
                     }
                 });
     }
@@ -92,7 +91,7 @@ public class AddContactPaymentsPrivilegeViewModel extends WalletViewModelBase {
 
             @Override
             public void onError(String code, String e) {
-                setError("getAuthRequestUser", code, e);
+                setError("getAuthRequestUser error", code, e);
             }
         });
         getAuthRequestUser_.start();

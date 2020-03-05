@@ -3,6 +3,9 @@ package org.lndroid.wallet;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -39,6 +43,17 @@ public class NewAddressActivity extends WalletActivityBase {
         address_ = findViewById(R.id.address);
         state_ = findViewById(R.id.state);
         qrCode_ = findViewById(R.id.qrCode);
+
+        findViewById(R.id.copy).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) view.getContext().getSystemService(
+                        Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("address", address_.getText().toString());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(view.getContext(), "Copied to clipboard", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         Button button = findViewById(R.id.done);
         button.setOnClickListener(new View.OnClickListener() {

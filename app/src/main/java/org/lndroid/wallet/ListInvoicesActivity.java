@@ -29,6 +29,7 @@ public class ListInvoicesActivity extends WalletActivityBase {
         WalletData.ListInvoicesRequest req = WalletData.ListInvoicesRequest.builder()
                 .setPage(WalletData.ListPage.builder().setCount(10).build())
                 .setSort("id")
+                .setSortDesc(true)
                 .setNoAuth(true)
                 .setEnablePaging(true)
                 .build();

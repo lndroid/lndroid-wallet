@@ -80,7 +80,6 @@ public class AddContactPaymentsPrivilegeActivity extends AuthActivityBase {
                 } else {
                     app_.setText("");
                     contact_.setText("");
-                    state_.setText("Please wait..");
                 }
             }
         });

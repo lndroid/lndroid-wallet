@@ -5,31 +5,63 @@ import android.widget.TextView;
 
 import org.lndroid.framework.WalletData;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 class ListInvoicesView {
 
     public static class ViewHolder extends ListViewBase.ViewHolder<WalletData.Invoice> {
-        private TextView id_;
-        private TextView value_;
-        private TextView paid_;
+        private TextView amount_;
+        private TextView settleTime_;
+        private TextView note_;
+        private TextView protocol_;
+        private DateFormat dateFormat_;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            id_ = itemView.findViewById(R.id.invoiceListId);
-            value_ = itemView.findViewById(R.id.invoiceListValue);
-            paid_ = itemView.findViewById(R.id.invoiceListPaid);
+            amount_ = itemView.findViewById(R.id.amount);
+            settleTime_ = itemView.findViewById(R.id.settleTime);
+            note_ = itemView.findViewById(R.id.note);
+            protocol_ = itemView.findViewById(R.id.protocol);
+            dateFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("en", "US"));
         }
 
         protected void fillData() {
-            id_.setText(Long.toString(data().id()).toString());
-            value_.setText(new Long(data().valueSat()).toString());
-            paid_.setText(new Long(data().amountPaidMsat()).toString());
+            amount_.setText((data().amountPaidMsat() / 1000)+" / "+data().valueSat()+" sat");
+            if (data().settleTime() != 0)
+                settleTime_.setText("Paid on "+dateFormat_.format(new Date(data().settleTime())));
+            else if ((data().createTime() + data().expiry() * 1000) < System.currentTimeMillis())
+                settleTime_.setText("Expired");
+            else
+                settleTime_.setText("Active");
+
+            if (data().description() != null) {
+                String desc = data().description();
+                if (desc.length() > 20)
+                    desc = desc.substring(0, 19)+"...";
+                note_.setText(desc);
+            } else if (data().descriptionHashHex() != null) {
+                String hash = data().descriptionHashHex();
+                if (hash.length() > 12)
+                    hash = hash.substring(0, 6) + "..." + hash.substring(hash.length() - 6);
+                note_.setText(hash);
+            } else {
+                note_.setText("");
+            }
+
+            if (data().isKeysend())
+                protocol_.setText("keysend");
+            else
+                protocol_.setText("");
         }
 
         protected void clearData() {
-            id_.setText("");
-            value_.setText("");
-            paid_.setText("");
+            amount_.setText("");
+            settleTime_.setText("");
+            note_.setText("");
+            protocol_.setText("");
         }
     }
 
