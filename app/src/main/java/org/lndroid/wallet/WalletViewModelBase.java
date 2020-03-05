@@ -2,6 +2,7 @@ package org.lndroid.wallet;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -45,7 +46,7 @@ public class WalletViewModelBase extends ViewModel {
         return pluginClient_.haveSessionToken();
     }
 
-    public void getSessionToken(Context ctx) {
+    public void getSessionToken(final Context ctx) {
         WalletServer.getInstance().getSessionToken(ctx, new IResponseCallback<String>() {
             @Override
             public void onResponse(String s) {
@@ -57,6 +58,7 @@ public class WalletViewModelBase extends ViewModel {
                 Log.e(tag_, "Failed to get session token: " + s);
                 authError_.setValue(WalletData.Error.builder()
                     .setCode(s).setMessage(s1).build());
+                Toast.makeText(ctx, "Failed to get auth session token", Toast.LENGTH_LONG).show();
             }
         });
     }

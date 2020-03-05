@@ -29,6 +29,7 @@ public class ListChannelsActivity extends WalletActivityBase {
         WalletData.ListChannelsRequest req = WalletData.ListChannelsRequest.builder()
                 .setPage(WalletData.ListPage.builder().setCount(10).build())
                 .setSort("active")
+                .setSortDesc(true)
                 .setNoAuth(true)
                 .setEnablePaging(true)
                 .build();

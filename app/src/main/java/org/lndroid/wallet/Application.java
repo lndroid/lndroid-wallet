@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.multidex.MultiDexApplication;
 import androidx.work.WorkerParameters;
 
@@ -26,18 +27,27 @@ import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.soloader.SoLoader;
 
+import org.lndroid.framework.WalletData;
 import org.lndroid.framework.client.IPluginClient;
-import org.lndroid.framework.common.IResponseCallback;
+import org.lndroid.framework.usecases.bg.BackgroundActivityService;
+import org.lndroid.framework.usecases.bg.ISyncNotificationManager;
 import org.lndroid.framework.usecases.bg.RecvPaymentWorker;
-import org.lndroid.framework.usecases.bg.SendPaymentService;
 import org.lndroid.framework.usecases.bg.SyncWorker;
 
 public class Application extends MultiDexApplication {
 
+    public static final String TAG = "Application";
+
     public static final String ID_MESSAGE = "org.lndroid.wallet.messages.ID_MESSAGE";
     public static final String SEND_PAYMENT_CHANNEL_ID = "org.lndroid.wallet.notifications.SEND_PAYMENT";
+    public static final String PAID_INVOICE_CHANNEL_ID = "org.lndroid.wallet.notifications.PAID_INVOICE";
+    public static final String SYNC_CHANNEL_ID = "org.lndroid.wallet.notifications.SYNC";
 
     public static final String EXTRA_AUTH_REQUEST_ID = "org.lndroid.extra.AUTH_REQUEST_ID";
+
+    public static final int NOTIFICATION_ID_SEND_PAYMENT = 1;
+    public static final int NOTIFICATION_ID_SYNC_GRAPH_CHAIN = 2;
+    public static final int NOTIFICATION_ID_SYNC_RECV_PAYMENT = 3;
 
     // RecvPayment worker implementation that will ensure WalletServer is
     // started and will provide a Plugin client for the worker
@@ -50,7 +60,39 @@ public class Application extends MultiDexApplication {
         @Override
         public IPluginClient getPluginClient() {
             WalletServer.ensure(getApplicationContext());
-            return WalletServer.buildPluginClient();
+            return WalletServer.buildAnonymousPluginClient();
+        }
+
+        @Override
+        public ISyncNotificationManager getNotificationManager() {
+            return new ISyncNotificationManager() {
+                @Override
+                public void showNotification(int i) {
+                    NotificationManager notificationManager = (NotificationManager)
+                            getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                            getApplicationContext(), SYNC_CHANNEL_ID)
+                            .setContentTitle("Payment service")
+                            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                            // NOTE: this is required!
+                            // FIXME change
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setOngoing(true)
+                            .setContentText("Waiting for incoming payments")
+                            .setPriority(NotificationCompat.PRIORITY_LOW)
+                    ;
+
+                    notificationManager.notify(NOTIFICATION_ID_SYNC_RECV_PAYMENT, builder.build());
+                }
+
+                @Override
+                public void hideNotification(int i) {
+                    NotificationManager notificationManager = (NotificationManager)
+                            getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+                    notificationManager.cancel(NOTIFICATION_ID_SYNC_RECV_PAYMENT);
+                }
+            };
         }
     }
 
@@ -64,7 +106,38 @@ public class Application extends MultiDexApplication {
         @Override
         public IPluginClient getPluginClient() {
             WalletServer.ensure(getApplicationContext());
-            return WalletServer.buildPluginClient();
+            return WalletServer.buildAnonymousPluginClient();
+        }
+
+        @Override
+        public ISyncNotificationManager getNotificationManager() {
+            return new ISyncNotificationManager() {
+                @Override
+                public void showNotification(int i) {
+                    NotificationManager notificationManager = (NotificationManager)
+                            getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                            getApplicationContext(), SYNC_CHANNEL_ID)
+                            .setContentTitle("Synchronization service")
+                            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                            // NOTE: this is required!
+                            // FIXME change
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setOngoing(true)
+                            .setContentText("Synchronization of graph and blockchain")
+                            .setPriority(NotificationCompat.PRIORITY_LOW);
+
+                    notificationManager.notify(NOTIFICATION_ID_SYNC_GRAPH_CHAIN, builder.build());
+                }
+
+                @Override
+                public void hideNotification(int i) {
+                    NotificationManager notificationManager = (NotificationManager)
+                            getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+                    notificationManager.cancel(NOTIFICATION_ID_SYNC_RECV_PAYMENT);
+                }
+            };
         }
     }
 
@@ -106,62 +179,126 @@ public class Application extends MultiDexApplication {
 
         // start payment service to keep app in bg while pending payments
         // are retried
-        final SendPaymentService ps = SendPaymentService.getInstance();
-        ps.setContext(this);
-        ps.setNotificationFactory(new SendPaymentService.INofiticationFactory() {
+        final BackgroundActivityService ps = BackgroundActivityService.getInstance();
+        ps.setServiceManager(new BackgroundActivityService.IServiceManager() {
+            private Notification notification_;
+            private NotificationCompat.Builder builder_;
+
             @Override
-            public int notificationId() {
-                // FIXME
-                return 1;
+            public void startService(WalletData.BackgroundInfo info) {
+                // we might call this many times if tx terminates by timeout
+                // and we restart, we'd get new active payment list but
+                // service is already started and no need to restart it.
+                if (notification_ != null)
+                    return;
+
+                Log.i(TAG, "starting foreground service");
+                createNotification(info);
+
+                Intent intent = new Intent(Application.this, BackgroundActivityService.ForegroundService.class);
+                ContextCompat.startForegroundService(Application.this, intent);
+            }
+
+            private void updateBuilder(WalletData.BackgroundInfo info) {
+                String text = "";
+                if (info.activeSendPaymentCount() > 0)
+                    text += (text.isEmpty() ? "": ", ")+"Sending payments: "+info.activeSendPaymentCount();
+                if (info.pendingChannelCount() > 0)
+                    text += (text.isEmpty() ? "": ", ")+"Pending channels: "+info.pendingChannelCount()+"\n";
+                if (info.activeOpenChannelCount() > 0)
+                    text += (text.isEmpty() ? "": ", ")+"Opening channels: "+info.activeOpenChannelCount()+"\n";
+                if (info.activeCloseChannelCount() > 0)
+                    text += (text.isEmpty() ? "": ", ")+"Closing channels: "+info.activeCloseChannelCount()+"\n";
+                if (info.activeSendCoinCount() > 0)
+                    text += (text.isEmpty() ? "": ", ")+"Sending coins: "+info.activeSendCoinCount()+"\n";
+
+                int priority = NotificationCompat.PRIORITY_LOW;
+                if (info.pendingChannelCount() > 0)
+                    priority = NotificationCompat.PRIORITY_MAX;
+
+                builder_
+                        .setContentText(text)
+                        .setPriority(priority)
+                ;
             }
 
             @Override
-            public Notification createNotification(int paymentCount) {
-                Intent notificationIntent = new Intent(getApplicationContext(), ListPaymentsActivity.class);
+            public void updateNotification(WalletData.BackgroundInfo info) {
+                updateBuilder(info);
+                notification_ = builder_.build();
+
+                NotificationManager notificationManager = (NotificationManager)
+                        getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.notify(notificationId(), notification_);
+            }
+
+            private void createNotification(WalletData.BackgroundInfo info) {
+                Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
                 PendingIntent pendingIntent =
                         PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 
-                return new NotificationCompat.Builder(getApplicationContext(), SEND_PAYMENT_CHANNEL_ID)
-                        .setContentTitle("Lndroid Wallet")
-                        .setContentText("Sending payments: "+paymentCount)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                builder_ = new NotificationCompat.Builder(getApplicationContext(), SEND_PAYMENT_CHANNEL_ID)
+                        .setContentTitle("Background activity service")
                         .setCategory(NotificationCompat.CATEGORY_SERVICE)
                         // NOTE: this is required!
                         // FIXME change
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentIntent(pendingIntent)
-//                        .setOngoing(true)
-                        .build();
-            }
-        });
+                        .setOnlyAlertOnce(true)
+                        .setOngoing(true)
+                ;
 
-        final IPluginClient client = WalletServer.buildPluginClient();
-        WalletServer.getInstance().getSessionToken(this, new IResponseCallback<String>() {
-            @Override
-            public void onResponse(String s) {
-                client.setSessionToken(s);
-                ps.start(client);
+                // FIXME also supply PublicNotification w/ numbers cut from the text!
+
+                updateBuilder(info);
+                notification_ = builder_.build();
             }
 
             @Override
-            public void onError(String s, String s1) {
-                Log.e("SendPaymentService", "Failed to get session token: " + s);
-                // FIXME now what? Instead of root, use Guest role which should
-                //  have NONE as auth type and thus session token should always be available
-                //  OR maybe it's not even required
+            public void stopService() {
+                Log.i(TAG, "stopping foreground service");
+                Intent intent = new Intent(Application.this, BackgroundActivityService.ForegroundService.class);
+                Application.this.stopService(intent);
+
+                NotificationManager notificationManager = (NotificationManager)
+                        getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.cancel(notificationId());
+
+                notification_ = null;
+            }
+
+            @Override
+            public int notificationId() {
+                return NOTIFICATION_ID_SEND_PAYMENT;
+            }
+
+            @Override
+            public Notification notification() {
+                return notification_;
             }
         });
+
+        ps.start(WalletServer.buildAnonymousPluginClient());
     }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    SEND_PAYMENT_CHANNEL_ID,
-                    "Payment service",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
             NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
+            manager.createNotificationChannel(new NotificationChannel(
+                    SEND_PAYMENT_CHANNEL_ID,
+                    "Wallet backround activity service",
+                    NotificationManager.IMPORTANCE_HIGH
+            ));
+            manager.createNotificationChannel(new NotificationChannel(
+                    PAID_INVOICE_CHANNEL_ID,
+                    "Wallet payment received",
+                    NotificationManager.IMPORTANCE_HIGH
+            ));
+            manager.createNotificationChannel(new NotificationChannel(
+                    SYNC_CHANNEL_ID,
+                    "Wallet synchronization service",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            ));
         }
     }
 }

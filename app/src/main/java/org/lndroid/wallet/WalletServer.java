@@ -1,11 +1,13 @@
 package org.lndroid.wallet;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.CancellationSignal;
 import android.os.Messenger;
 import android.util.Log;
 
 import androidx.biometric.BiometricPrompt;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import org.lndroid.framework.WalletData;
@@ -24,6 +26,7 @@ import org.lndroid.framework.client.PluginClientBuilder;
 import org.lndroid.framework.engine.ISignAuthPrompt;
 import org.lndroid.framework.engine.PluginServerStarter;
 import org.lndroid.framework.engine.PluginUtilsLocal;
+import org.lndroid.framework.usecases.bg.PaidInvoicesNotifyWorker;
 
 public class WalletServer {
 
@@ -96,7 +99,7 @@ public class WalletServer {
     private WalletServer() {
     }
 
-    private void startInstance(Context ctx, boolean mayExist) {
+    private void startInstance(final Context ctx, boolean mayExist) {
 
         userId_ = WalletData.UserIdentity.builder().setUserId(WalletData.ROOT_USER_ID).build();
 
@@ -113,6 +116,30 @@ public class WalletServer {
 
         authClient_ = new AuthClient(server_);
         Log.i(TAG, "authClient "+authClient_);
+
+        PaidInvoicesNotifyWorker.getInstance()
+                .setNotificationManager(new PaidInvoicesNotifyWorker.INotificationManager() {
+
+                    @Override
+                    public void createNotification(WalletData.PaidInvoicesEvent e) {
+                        NotificationManager notificationManager = (NotificationManager)
+                                ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                                ctx, Application.PAID_INVOICE_CHANNEL_ID)
+                                .setContentTitle("Payment received")
+                                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                                // NOTE: this is required!
+                                // FIXME change
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setOngoing(false)
+                                .setContentText("Sats: "+e.satsReceived()+", payments: "+e.invoicesCount())
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                        notificationManager.notify(0, builder.build());
+                    }
+                })
+                .start(buildAnonymousPluginClient());
     }
 
     public static void ensure(Context ctx) {
@@ -130,6 +157,13 @@ public class WalletServer {
     public static IPluginClient buildPluginClient() {
         return new PluginClientBuilder()
                 .setUserIdentity(instance_.getCurrentUserId())
+                .setServer(instance_.server())
+                .build();
+    }
+
+    public static IPluginClient buildAnonymousPluginClient() {
+        return new PluginClientBuilder()
+                .setUserIdentity(WalletData.UserIdentity.builder().build())
                 .setServer(instance_.server())
                 .build();
     }
@@ -187,90 +221,6 @@ public class WalletServer {
                         }
                     });
                 }
-/*                ISigner signer = null;
-                if (!WalletData.AUTH_TYPE_PASSWORD.equals(u.authType())) {
-                    signer = keyStore_.getKeySigner(PluginUtils.userKeyAlias(u.id()));
-                } else {
-                    String password = "123456";
-                    // FIXME show password UI, can't create signer w/o knowing the password!
-
-                    signer = keyStore_.getPasswordKeySigner(
-                            PluginUtils.userKeyAlias(userId_.userId()),
-                            u.nonce(), password);
-                    if (signer == null) {
-                        Log.e(TAG, "failed to get password signer for "+userId_.userId());
-                        cb.onError(Errors.FORBIDDEN, Errors.errorMessage(Errors.FORBIDDEN));
-                        return;
-                    }
-                }
-
-                // Try to sign, if it fails w/ need-auth exception then show BioPrompt and then retry
-                PluginUtilsLocal.SessionToken st = PluginUtilsLocal.prepareSessionToken(10000, null);
-                st.signature = signer.sign(st.payload);
-                if (st.signature != null) {
-                    cb.onResponse(st.formatToken());
-                } else {
-
-                    final ISigner authSigner = signer;
-                    if (WalletData.AUTH_TYPE_DEVICE_SECURITY.equals(u.authType())
-                            || WalletData.AUTH_TYPE_SCREEN_LOCK.equals(u.authType())
-                            || WalletData.AUTH_TYPE_BIO.equals(u.authType())
-                    ) {
-                        BiometricPrompt.PromptInfo.Builder b = new BiometricPrompt.PromptInfo.Builder()
-                                .setTitle("Please authorize")
-                                .setSubtitle("Confirm your identity before accessing the wallet");
-
-                        if (!WalletData.AUTH_TYPE_BIO.equals(u.authType()))
-                            b.setDeviceCredentialAllowed(true);
-                        else
-                            b.setNegativeButtonText("Cancel");
-
-                        BiometricPrompt biometricPrompt = new BiometricPrompt(
-                                // FIXME
-                                (FragmentActivity)ctx,
-                                ctx.getMainExecutor(),
-                                new BiometricPrompt.AuthenticationCallback() {
-
-                                    @Override
-                                    public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
-                                        super.onAuthenticationSucceeded(result);
-
-                                        // retry
-                                        PluginUtilsLocal.SessionToken st = PluginUtilsLocal.prepareSessionToken(3600000, null);
-                                        if (WalletData.AUTH_TYPE_BIO.equals(u.authType()))
-                                            st.signature = authSigner.sign(st.payload, result.getCryptoObject());
-                                        else
-                                            st.signature = authSigner.sign(st.payload);
-                                        cb.onResponse(st.formatToken());
-                                    }
-
-                                    @Override
-                                    public void onAuthenticationError(int errorCode, CharSequence errString) {
-                                        super.onAuthenticationError(errorCode, errString);
-                                        Log.e(TAG, "device auth failed: " + errorCode + " error " + errString);
-                                        cb.onError(Errors.FORBIDDEN, "" + errString);
-                                    }
-
-
-                                    @Override
-                                    public void onAuthenticationFailed() {
-                                        super.onAuthenticationFailed();
-                                        Log.e(TAG, "device auth failed");
-                                        cb.onError(Errors.FORBIDDEN, Errors.errorMessage(Errors.FORBIDDEN));
-                                    }
-
-                                }
-                                );
-
-                        if (WalletData.AUTH_TYPE_BIO.equals(u.authType())) {
-                            biometricPrompt.authenticate(b.build(), (BiometricPrompt.CryptoObject)signer.getCryptoObject());
-                        } else {
-                            biometricPrompt.authenticate(b.build());
-                        }
-                    }
-                }
-
- */
             }
 
             @Override

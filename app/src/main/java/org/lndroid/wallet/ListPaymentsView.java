@@ -57,7 +57,7 @@ class ListPaymentsView {
             else
                 type_.setText("Invoice");
             amount_.setText("-"+p.valueMsat()/1000+" sat");
-            fee_.setText("Fee: "+p.feeMsat());
+            fee_.setText("Fee: "+(p.feeMsat()/1000));
 
             switch (p.state()) {
                 case WalletData.SEND_PAYMENT_STATE_OK:
