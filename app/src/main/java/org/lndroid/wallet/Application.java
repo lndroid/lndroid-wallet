@@ -135,7 +135,7 @@ public class Application extends MultiDexApplication {
                 public void hideNotification(int i) {
                     NotificationManager notificationManager = (NotificationManager)
                             getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-                    notificationManager.cancel(NOTIFICATION_ID_SYNC_RECV_PAYMENT);
+                    notificationManager.cancel(NOTIFICATION_ID_SYNC_GRAPH_CHAIN);
                 }
             };
         }
@@ -154,8 +154,15 @@ public class Application extends MultiDexApplication {
     }
 
     @Override
+    public void onTerminate() {
+        Log.i("WalletApplication", "terminating");
+        super.onTerminate();
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
+        Log.i("WalletApplication", "starting");
         SoLoader.init(this, false);
 
         // add Flipper in DEBUG build
@@ -168,6 +175,13 @@ public class Application extends MultiDexApplication {
 
         // ensure wallet server is started
         WalletServer.ensure(getApplicationContext());
+
+        // make sure ongoing notifications are hidden on the app restart,
+        // bcs due to app instability these might hang forever
+        NotificationManager notificationManager = (NotificationManager)
+                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(NOTIFICATION_ID_SYNC_GRAPH_CHAIN);
+        notificationManager.cancel(NOTIFICATION_ID_SYNC_RECV_PAYMENT);
 
         // ensure RecvPayment and SyncPayment workers are scheduled
         // NOTE: increase version if you adjust work settings to reschedule it
@@ -281,7 +295,7 @@ public class Application extends MultiDexApplication {
         ps.start(WalletServer.buildAnonymousPluginClient());
     }
 
-    private void createNotificationChannel() {
+    private void createNotificationChannel( ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(new NotificationChannel(

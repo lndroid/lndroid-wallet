@@ -15,6 +15,7 @@ import org.lndroid.framework.common.Errors;
 import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.common.ISigner;
 import org.lndroid.framework.common.PluginUtils;
+import org.lndroid.framework.defaults.DefaultBroadcaster;
 import org.lndroid.framework.defaults.DefaultDaoProvider;
 import org.lndroid.framework.defaults.DefaultKeyStore;
 import org.lndroid.framework.defaults.DefaultSignAuthPrompt;
@@ -109,6 +110,7 @@ public class WalletServer {
         server_ = new PluginServerStarter()
                 .setDaoProvider(new DefaultDaoProvider(cfg, keyStore_))
                 .setAuthComponentProvider(new AuthComponentProvider())
+                .setBroadcaster(new DefaultBroadcaster(ctx))
                 .setKeyStore(keyStore_)
                 .setDaoConfig(cfg)
                 .start(mayExist);
@@ -128,13 +130,13 @@ public class WalletServer {
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                                 ctx, Application.PAID_INVOICE_CHANNEL_ID)
                                 .setContentTitle("Payment received")
-                                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                                .setCategory(NotificationCompat.CATEGORY_EVENT)
                                 // NOTE: this is required!
                                 // FIXME change
                                 .setSmallIcon(R.mipmap.ic_launcher)
                                 .setOngoing(false)
                                 .setContentText("Sats: "+e.satsReceived()+", payments: "+e.invoicesCount())
-                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                                .setPriority(NotificationCompat.PRIORITY_MAX);
 
                         notificationManager.notify(0, builder.build());
                     }
