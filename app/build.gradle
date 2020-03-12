@@ -4,13 +4,15 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "org.lndroid.wallet"
+        applicationId 'org.lndroid.wallet'
         minSdkVersion 18
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName '0.1.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+
+        manifestPlaceholders = [AppName:"Lndroid.Wallet"]
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -22,6 +24,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+    }
+    flavorDimensions 'net'
+    productFlavors {
+        tstnet {
+            dimension = 'net'
+            applicationIdSuffix = '.testnet'
+            manifestPlaceholders = [AppName:"Lndroid.Wallet (Testnet)"]
         }
     }
 }
@@ -62,9 +73,11 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    implementation project(path: ':lndroid-framework-debug')
+    debugImplementation project(path: ':lndroid-framework-debug')
+    releaseImplementation project(path: ':lndroid-framework-release')
     implementation project(path: ':Lndmobile')
-    implementation project(path: ':lndroid-daemon-debug')
+    debugImplementation project(path: ':lndroid-daemon-debug')
+    releaseImplementation project(path: ':lndroid-daemon-release')
 
     // flipper: built-in db viewer, noop in release mode
     debugImplementation 'com.facebook.flipper:flipper:0.29.4'

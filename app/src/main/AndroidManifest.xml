@@ -12,34 +12,90 @@
         android:name=".Application"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@drawable/ic_logo"
+        android:label="${AppName}"
+        android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".AddContactActivity"></activity>
-        <activity android:name=".GetWalletInfoActivity" />
-        <activity android:name=".ListAppsActivity" />
-        <activity android:name=".GetAppActivity" />
-        <activity android:name=".GetContactActivity" />
-        <activity android:name=".ListContactsActivity" />
-        <activity android:name=".GetUtxoActivity" />
-        <activity android:name=".ListUtxoActivity" />
-        <activity android:name=".ListInvoicesActivity" />
-        <activity android:name=".ListChannelsActivity" />
-        <activity android:name=".ListTransactionsActivity" />
-        <activity android:name=".GetTransactionActivity" />
-        <activity android:name=".SendCoinsActivity" />
-        <activity android:name=".GetPeerActivity" />
-        <activity android:name=".ListPeersActivity" />
-        <activity android:name=".PasswordAuthActivity" />
-        <activity android:name=".GetChannelActivity" />
-        <activity android:name=".OpenChannelActivity" />
-        <activity android:name=".NewAddressActivity" />
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <activity android:name=".init.CreateRootActivity"></activity>
+        <activity android:name=".init.GenSeedActivity" />
+        <activity android:name=".init.InitActivity" />
+        <activity android:name=".UnlockActivity" />
+        <activity
+            android:name=".AddContactActivity"
+            android:parentActivityName=".ListContactsActivity" />
+        <activity
+            android:name=".ConnectPeerActivity"
+            android:parentActivityName=".ListPeersActivity" />
+        <activity
+            android:name=".SendCoinsActivity"
+            android:parentActivityName=".ListTransactionsActivity" />
+        <activity
+            android:name=".OpenChannelActivity"
+            android:parentActivityName=".ListChannelsActivity" />
+        <activity
+            android:name=".NewAddressActivity"
+            android:parentActivityName=".ListTransactionsActivity" />
+        <activity
+            android:name=".SendPaymentActivity"
+            android:parentActivityName=".ListPaymentsActivity" />
+        <activity
+            android:name=".AddInvoiceActivity"
+            android:parentActivityName=".ListInvoicesActivity" />
+        <activity
+            android:name=".GetWalletInfoActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".GetAppActivity"
+            android:parentActivityName=".ListAppsActivity" />
+        <activity
+            android:name=".GetContactActivity"
+            android:parentActivityName=".ListContactsActivity" />
+        <activity
+            android:name=".GetUtxoActivity"
+            android:parentActivityName=".ListUtxoActivity" />
+        <activity
+            android:name=".GetTransactionActivity"
+            android:parentActivityName=".ListTransactionsActivity" />
+        <activity
+            android:name=".GetChannelActivity"
+            android:parentActivityName=".ListChannelsActivity" />
+        <activity
+            android:name=".GetPeerActivity"
+            android:parentActivityName=".ListPeersActivity" />
+        <activity
+            android:name=".GetSendPaymentActivity"
+            android:parentActivityName=".ListPaymentsActivity" />
+        <activity
+            android:name=".GetInvoiceActivity"
+            android:parentActivityName=".ListInvoicesActivity" />
+        <activity
+            android:name=".ListContactsActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ListAppsActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ListUtxoActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ListInvoicesActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ListChannelsActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ListTransactionsActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ListPeersActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ListPaymentsActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".auth.ShareContactActivity"
             android:exported="true" />
-        <activity android:name=".ConnectPeerActivity" />
         <activity
             android:name=".auth.AddContactPaymentsPrivilegeActivity"
             android:exported="true" />
@@ -56,21 +112,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ListPaymentsActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".GetSendPaymentActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".SendPaymentActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".GetInvoiceActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".AddInvoiceActivity"
-            android:parentActivityName=".MainActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".StartActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
@@ -78,20 +127,13 @@
         <activity
             android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
             android:exported="true" />
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <service
             android:name=".Application$IpcService"
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name="org.lndroid.framework.usecases.bg.SendPaymentService$ForegroundService"
+            android:name="org.lndroid.framework.usecases.bg.BackgroundActivityService$ForegroundService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />

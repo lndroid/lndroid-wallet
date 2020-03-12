@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item android:id="@+id/menuWalletInfo"
+        android:title="Wallet info"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuApps"
+        android:title="Applications"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuContacts"
+        android:title="Contacts"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuPayments"
+        android:title="Payments"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuInvoices"
+        android:title="Invoices"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuChannels"
+        android:title="Channels"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuPeers"
+        android:title="Peers"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuTransactions"
+        android:title="Transactions"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuUtxo"
+        android:title="UTXO"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuHelp"
+        android:title="Help"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/menuAbout"
+        android:title="About"
+        app:showAsAction="never"
+        />
+</menu>

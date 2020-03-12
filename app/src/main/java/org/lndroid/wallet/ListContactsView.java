@@ -37,7 +37,7 @@ public class ListContactsView {
 
     public static class Adapter extends ListViewBase.Adapter<WalletData.Contact, ViewHolder> {
 
-        protected Adapter() {
+        public Adapter() {
             super(R.layout.list_contacts, new ListViewBase.IViewHolderFactory<ViewHolder>() {
                 @Override
                 public ViewHolder create(View view) {

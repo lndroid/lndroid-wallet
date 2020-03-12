@@ -1,12 +1,11 @@
 package org.lndroid.wallet;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.os.CancellationSignal;
 import android.os.Messenger;
 import android.util.Log;
 
-import androidx.biometric.BiometricPrompt;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -24,7 +23,6 @@ import org.lndroid.framework.engine.IDaoConfig;
 import org.lndroid.framework.client.IPluginClient;
 import org.lndroid.framework.engine.IKeyStore;
 import org.lndroid.framework.client.PluginClientBuilder;
-import org.lndroid.framework.engine.ISignAuthPrompt;
 import org.lndroid.framework.engine.PluginServerStarter;
 import org.lndroid.framework.engine.PluginUtilsLocal;
 import org.lndroid.framework.usecases.bg.PaidInvoicesNotifyWorker;
@@ -132,10 +130,10 @@ public class WalletServer {
                                 .setContentTitle("Payment received")
                                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                                 // NOTE: this is required!
-                                // FIXME change
-                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setSmallIcon(R.drawable.ic_logo)
                                 .setOngoing(false)
                                 .setContentText("Sats: "+e.satsReceived()+", payments: "+e.invoicesCount())
+                                .setDefaults(NotificationCompat.DEFAULT_ALL)
                                 .setPriority(NotificationCompat.PRIORITY_MAX);
 
                         notificationManager.notify(0, builder.build());
@@ -170,6 +168,7 @@ public class WalletServer {
                 .build();
     }
 
+    public IKeyStore keyStore() { return keyStore_; }
     public Messenger server() {
         return server_;
     }
@@ -178,7 +177,7 @@ public class WalletServer {
         return userId_;
     }
 
-    public void getSessionToken(final Context ctx, final IResponseCallback<String> cb) {
+    public void getSessionToken(final FragmentActivity activity, final IResponseCallback<String> cb) {
         authClient_.getUserAuthInfo(userId_.userId(), new IResponseCallback<WalletData.User>() {
 
             @Override
@@ -203,8 +202,9 @@ public class WalletServer {
                     cb.onResponse(st.formatToken());
                 } else {
 
-                    ISignAuthPrompt prompt = new DefaultSignAuthPrompt();
-                    prompt.auth(signer, (FragmentActivity) ctx, u, new IResponseCallback() {
+                    DefaultSignAuthPrompt prompt = new DefaultSignAuthPrompt();
+                    prompt.setPasswordAuthPrompt(PinAuthDialog.createPrompt());
+                    prompt.auth(signer, activity, u, new IResponseCallback() {
 
                         @Override
                         public void onResponse(Object o) {

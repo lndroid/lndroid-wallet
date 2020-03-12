@@ -1,6 +1,7 @@
 package org.lndroid.wallet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
@@ -9,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import org.lndroid.framework.WalletData;
@@ -21,6 +25,11 @@ public class ListPeersActivity extends WalletActivityBase {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_peers);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Peers");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         model_ = ViewModelProviders.of(this).get(ListPeersViewModel.class);
         setModel(model_);
@@ -36,6 +45,7 @@ public class ListPeersActivity extends WalletActivityBase {
 
         // create list view adapter
         final ListPeersView.Adapter adapter = new ListPeersView.Adapter();
+        adapter.setEmptyView(findViewById(R.id.notFound));
 
         // subscribe adapter to model list updates
         model_.getPeerListPager().pagedList().observe(this, new Observer<PagedList<WalletData.Peer>>() {
@@ -68,4 +78,30 @@ public class ListPeersActivity extends WalletActivityBase {
         intent.putExtra(Application.ID_MESSAGE, id);
         startActivity(intent);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_list_peers, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menuConnectPeer:
+                startConnectPeer();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void startConnectPeer() {
+        Intent intent = new Intent(this, ConnectPeerActivity.class);
+        startActivity(intent);
+    }
+
+
 }

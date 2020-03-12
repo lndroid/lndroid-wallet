@@ -1,6 +1,7 @@
 package org.lndroid.wallet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -27,6 +28,11 @@ public class ConnectPeerActivity extends WalletActivityBase {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_peer);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Connect to peer");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         model_ = ViewModelProviders.of(this).get(ConnectPeerViewModel.class);
         setModel(model_);

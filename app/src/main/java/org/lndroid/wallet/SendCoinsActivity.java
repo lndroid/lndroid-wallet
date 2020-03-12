@@ -1,6 +1,7 @@
 package org.lndroid.wallet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -35,6 +36,11 @@ public class SendCoinsActivity extends WalletActivityBase {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_coins);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Send coins");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         model_ = ViewModelProviders.of(this).get(SendCoinsViewModel.class);
         setModel(model_);
@@ -183,6 +189,9 @@ public class SendCoinsActivity extends WalletActivityBase {
     }
 
     private void calcFees() {
+        if (address_.getText().toString().isEmpty())
+            return;
+
         state_.setText("Estimating fees...");
         if (model_.estimateFee().isExecuting())
             model_.estimateFee().recover();

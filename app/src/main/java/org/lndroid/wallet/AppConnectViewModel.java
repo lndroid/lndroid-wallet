@@ -22,6 +22,7 @@ public class AppConnectViewModel extends WalletViewModelBase {
 
     @Override
     protected void onCleared() {
+        getAppUser_.destroy();
         addUser_.destroy();
         super.onCleared();
     }

@@ -19,14 +19,6 @@ import androidx.core.content.ContextCompat;
 import androidx.multidex.MultiDexApplication;
 import androidx.work.WorkerParameters;
 
-import com.facebook.flipper.android.AndroidFlipperClient;
-import com.facebook.flipper.android.utils.FlipperUtils;
-import com.facebook.flipper.core.FlipperClient;
-import com.facebook.flipper.plugins.inspector.DescriptorMapping;
-import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
-import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
-import com.facebook.soloader.SoLoader;
-
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.client.IPluginClient;
 import org.lndroid.framework.usecases.bg.BackgroundActivityService;
@@ -48,6 +40,8 @@ public class Application extends MultiDexApplication {
     public static final int NOTIFICATION_ID_SEND_PAYMENT = 1;
     public static final int NOTIFICATION_ID_SYNC_GRAPH_CHAIN = 2;
     public static final int NOTIFICATION_ID_SYNC_RECV_PAYMENT = 3;
+
+    public static final int PIN_LENGTH = 6;
 
     // RecvPayment worker implementation that will ensure WalletServer is
     // started and will provide a Plugin client for the worker
@@ -76,8 +70,7 @@ public class Application extends MultiDexApplication {
                             .setContentTitle("Payment service")
                             .setCategory(NotificationCompat.CATEGORY_SERVICE)
                             // NOTE: this is required!
-                            // FIXME change
-                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setSmallIcon(R.drawable.ic_logo)
                             .setOngoing(true)
                             .setContentText("Waiting for incoming payments")
                             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -122,8 +115,7 @@ public class Application extends MultiDexApplication {
                             .setContentTitle("Synchronization service")
                             .setCategory(NotificationCompat.CATEGORY_SERVICE)
                             // NOTE: this is required!
-                            // FIXME change
-                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setSmallIcon(R.drawable.ic_logo)
                             .setOngoing(true)
                             .setContentText("Synchronization of graph and blockchain")
                             .setPriority(NotificationCompat.PRIORITY_LOW);
@@ -163,7 +155,8 @@ public class Application extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         Log.i("WalletApplication", "starting");
-        SoLoader.init(this, false);
+        FlipperInitializer.init(this);
+/*        SoLoader.init(this, false);
 
         // add Flipper in DEBUG build
         if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
@@ -172,6 +165,8 @@ public class Application extends MultiDexApplication {
             client.addPlugin(new DatabasesFlipperPlugin(this));
             client.start();
         }
+
+ */
 
         // ensure wallet server is started
         WalletServer.ensure(getApplicationContext());
@@ -255,14 +250,11 @@ public class Application extends MultiDexApplication {
                         .setContentTitle("Background activity service")
                         .setCategory(NotificationCompat.CATEGORY_SERVICE)
                         // NOTE: this is required!
-                        // FIXME change
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_logo)
                         .setContentIntent(pendingIntent)
                         .setOnlyAlertOnce(true)
                         .setOngoing(true)
                 ;
-
-                // FIXME also supply PublicNotification w/ numbers cut from the text!
 
                 updateBuilder(info);
                 notification_ = builder_.build();

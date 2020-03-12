@@ -1,6 +1,7 @@
 package org.lndroid.wallet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
@@ -22,6 +23,11 @@ public class ListAppsActivity extends WalletActivityBase {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_apps);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Applications");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         model_ = ViewModelProviders.of(this).get(ListAppsViewModel.class);
         setModel(model_);
 
@@ -37,6 +43,7 @@ public class ListAppsActivity extends WalletActivityBase {
 
         // create list view adapter
         final ListAppsView.Adapter adapter = new ListAppsView.Adapter();
+        adapter.setEmptyView(findViewById(R.id.notFound));
 
         // subscribe adapter to model list updates
         model_.getPager().pagedList().observe(this, new Observer<PagedList<WalletData.User>>() {

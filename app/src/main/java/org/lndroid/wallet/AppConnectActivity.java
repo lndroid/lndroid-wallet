@@ -1,6 +1,7 @@
 package org.lndroid.wallet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -38,6 +39,9 @@ public class AppConnectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_connect);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         Intent intent = getIntent();
         appPubkey_ = intent.getStringExtra(EXTRA_APP_PUBKEY);
         if (appPubkey_ == null || appPubkey_.isEmpty()) {
@@ -48,7 +52,7 @@ public class AppConnectActivity extends AppCompatActivity {
         }
 
         model_ = ViewModelProviders.of(this).get(AppConnectViewModel.class);
-        model_.ensureSessionToken(getApplicationContext());
+        model_.ensureSessionToken(this);
         model_.authError().observe(this, new Observer<WalletData.Error>() {
             @Override
             public void onChanged(WalletData.Error error) {
@@ -204,7 +208,7 @@ public class AppConnectActivity extends AppCompatActivity {
     private void replyToApp(WalletData.User u) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_SERVICE_CLASSNAME, Application.IpcService.class.getName());
-        intent.putExtra(EXTRA_SERVICE_PACKAGENAME, Application.IpcService.class.getPackage().getName());
+        intent.putExtra(EXTRA_SERVICE_PACKAGENAME, BuildConfig.APPLICATION_ID);
         intent.putExtra(EXTRA_SERVICE_PUBKEY, u.pubkey());
         setResult(RESULT_OK, intent);
         finish();

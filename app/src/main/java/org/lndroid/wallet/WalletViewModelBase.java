@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -46,8 +47,8 @@ public class WalletViewModelBase extends ViewModel {
         return pluginClient_.haveSessionToken();
     }
 
-    public void getSessionToken(final Context ctx) {
-        WalletServer.getInstance().getSessionToken(ctx, new IResponseCallback<String>() {
+    public void getSessionToken(final FragmentActivity activity) {
+        WalletServer.getInstance().getSessionToken(activity, new IResponseCallback<String>() {
             @Override
             public void onResponse(String s) {
                 pluginClient_.setSessionToken(s);
@@ -58,14 +59,15 @@ public class WalletViewModelBase extends ViewModel {
                 Log.e(tag_, "Failed to get session token: " + s);
                 authError_.setValue(WalletData.Error.builder()
                     .setCode(s).setMessage(s1).build());
-                Toast.makeText(ctx, "Failed to get auth session token", Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, "Failed to get auth session token", Toast.LENGTH_LONG).show();
+                activity.finish();
             }
         });
     }
 
-    public void ensureSessionToken(Context ctx) {
+    public void ensureSessionToken(FragmentActivity activity) {
         if (!haveSessionToken())
-            getSessionToken(ctx);
+            getSessionToken(activity);
     }
 
     public IPluginClient pluginClient() { return pluginClient_; }

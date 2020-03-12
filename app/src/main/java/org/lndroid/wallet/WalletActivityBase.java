@@ -1,11 +1,11 @@
 package org.lndroid.wallet;
 
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
 import org.lndroid.framework.WalletData;
 
-public class WalletActivityBase extends FragmentActivity {
+public class WalletActivityBase extends AppCompatActivity {
 
     private WalletViewModelBase model_;
 
@@ -13,7 +13,7 @@ public class WalletActivityBase extends FragmentActivity {
         model_ = model;
 
         // make sure we ask for auth immediately
-        model_.ensureSessionToken(getApplicationContext());
+        model_.ensureSessionToken(this);
 
         // terminate immediately if user auth fails
         model_.authError().observe(this, new Observer<WalletData.Error>() {

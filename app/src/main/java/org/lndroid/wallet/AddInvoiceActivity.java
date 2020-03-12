@@ -1,6 +1,7 @@
 package org.lndroid.wallet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -29,6 +30,11 @@ public class AddInvoiceActivity extends WalletActivityBase {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_invoice);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Add Invoice");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         model_ = ViewModelProviders.of(this).get(AddInvoiceViewModel.class);
         setModel(model_);

@@ -22,7 +22,9 @@ public class ListPeersView {
 
         @Override
         protected void fillData() {
-            String pubkey = data().pubkey();
+            String pubkey = "";
+            if (data().pubkey() != null)
+                pubkey = data().pubkey();
             if (pubkey.length() > 12)
                 pubkey = pubkey.substring(0, 6) + "..." + pubkey.substring(pubkey.length() - 6);
             pubkey_.setText(pubkey);

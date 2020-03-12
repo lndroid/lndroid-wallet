@@ -1,6 +1,7 @@
 package org.lndroid.wallet;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,37 @@ public class ListViewBase {
         private int layoutResource_;
         private IViewHolderFactory<VH> factory_;
 
+        private class EmptyView extends RecyclerView.AdapterDataObserver {
+            private View emptyView_;
+
+            public EmptyView(View ev) {
+                emptyView_ = ev;
+                checkIfEmpty();
+            }
+
+            private void checkIfEmpty() {
+                boolean emptyViewVisible = Adapter.this.getItemCount() == 0;
+                emptyView_.setVisibility(emptyViewVisible ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void onChanged() {
+                checkIfEmpty();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                checkIfEmpty();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                checkIfEmpty();
+            }
+        }
+
+        private View.OnClickListener itemClickListener_;
+
         public Adapter(int layoutResource, IViewHolderFactory<VH> factory) {
             super(new DiffUtil.ItemCallback<Entity>() {
                 @Override
@@ -67,7 +99,9 @@ public class ListViewBase {
             factory_ = factory;
         }
 
-        private View.OnClickListener itemClickListener_;
+        public void setEmptyView(View view) {
+            registerAdapterDataObserver(new EmptyView(view));
+        }
 
         public void setItemClickListener (View.OnClickListener cl) {
             itemClickListener_ = cl;

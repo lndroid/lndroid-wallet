@@ -1,6 +1,7 @@
 package org.lndroid.wallet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.ClipData;
@@ -36,6 +37,11 @@ public class NewAddressActivity extends WalletActivityBase {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_address);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("New address");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         model_ = ViewModelProviders.of(this).get(NewAddressViewModel.class);
         setModel(model_);

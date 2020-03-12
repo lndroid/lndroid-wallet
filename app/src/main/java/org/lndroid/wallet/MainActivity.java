@@ -1,14 +1,17 @@
 package org.lndroid.wallet;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,13 +19,12 @@ import android.widget.TextView;
 import org.lndroid.framework.WalletData;
 import org.lndroid.framework.common.Errors;
 import org.lndroid.framework.common.IResponseCallback;
-import org.lndroid.framework.usecases.ListContacts;
 import org.lndroid.framework.usecases.rpc.RPCGenSeed;
 import org.lndroid.framework.usecases.IRequestFactory;
 import org.lndroid.framework.usecases.rpc.RPCInitWallet;
 import org.lndroid.framework.usecases.rpc.RPCUnlockWallet;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "LnApiMain";
 
@@ -37,128 +39,43 @@ public class MainActivity extends FragmentActivity {
         Log.i(TAG, "main thread "+Thread.currentThread().getId());
 
         model_ = ViewModelProviders.of(this).get(MainViewModel.class);
+        model_.ensureSessionToken(this);
 
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         lightningBalance_ = findViewById(R.id.lightningBalance);
         blockchainBalance_ = findViewById(R.id.blockchainBalance);
         state_ = findViewById(R.id.state);
 
-        Button button = findViewById(R.id.unlock);
+        Button button = findViewById(R.id.sendPayment);
         button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                unlockWallet();
-            }
-        });
-        button = findViewById(R.id.initWallet);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                initWallet();
-            }
-        });
-        button = findViewById(R.id.walletInfo);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startGetWalletInfo();
-            }
-        });
-        button = findViewById(R.id.listApps);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startListApps();
-            }
-        });
-        button = findViewById(R.id.addContact);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startAddContact();
-            }
-        });
-        button = findViewById(R.id.listContacts);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startListContacts();
-            }
-        });
-        button = findViewById(R.id.newAddress);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startNewAddress();
-            }
-        });
-        button = findViewById(R.id.listUtxo);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startListUtxo();
+            @Override
+            public void onClick(View view) {
+                startSendPayment();
             }
         });
         button = findViewById(R.id.addInvoice);
         button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+            public void onClick(View view) {
                 startAddInvoice();
             }
         });
-        button = findViewById(R.id.listInvoices);
+        button = findViewById(R.id.sendCoins);
         button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startListInvoices();
-            }
-        });
-        button = (Button)findViewById(R.id.sendPayment);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startSendPayment();
-            }
-        });
-        button = (Button)findViewById(R.id.listPayments);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startListPayments();
-            }
-        });
-        button = (Button)findViewById(R.id.connectPeer);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startConnectPeer();
-            }
-        });
-        button = (Button)findViewById(R.id.listPeers);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startListPeers();
-            }
-        });
-
-        button = (Button)findViewById(R.id.openChannel);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startOpenChannel();
-            }
-        });
-        button = (Button)findViewById(R.id.listChannels);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startListChannels();
-            }
-        });
-        button = (Button)findViewById(R.id.sendCoins);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+            public void onClick(View view) {
                 startSendCoins();
             }
         });
-        button = (Button)findViewById(R.id.listTransactions);
+        button = findViewById(R.id.newAddress);
         button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startListTransactions();
-            }
-        });
-
-        // watch state changes
-        model_.walletState().observe(this, new Observer<WalletData.WalletState>() {
             @Override
-            public void onChanged(WalletData.WalletState state) {
-                updateState();
+            public void onClick(View view) {
+                startNewAddress();
             }
         });
 
@@ -167,7 +84,7 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onChanged(WalletData.WalletBalance walletBalance) {
                 if (walletBalance != null)
-                    blockchainBalance_.setText("Blockchain: "+walletBalance.totalBalance());
+                    blockchainBalance_.setText("Blockchain: "+walletBalance.totalBalance()+" sat");
             }
         });
 
@@ -175,7 +92,7 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onChanged(WalletData.ChannelBalance balance) {
                 if (balance != null)
-                    lightningBalance_.setText("Lightning: "+balance.balance());
+                    lightningBalance_.setText("Lightning: "+balance.balance()+" sat");
             }
         });
 
@@ -196,133 +113,18 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        // unlock use case
-        RPCUnlockWallet walletUnlock = model_.unlockWalletRPC();
-        walletUnlock.setCallback(this, new IResponseCallback<WalletData.UnlockWalletResponse>() {
-            @Override
-            public void onResponse(WalletData.UnlockWalletResponse r) {
-                Log.i(TAG, "unlock wallet ok");
-                state_.setText("Unlocked");
-            }
-
-            @Override
-            public void onError(String code, String e) {
-                Log.e(TAG, "unlock wallet error "+code+" msg "+e);
-                state_.setText("Unlock error");
-            }
-        });
-        walletUnlock.setRequestFactory(this, new IRequestFactory<WalletData.UnlockWalletRequest>() {
-            @Override
-            public WalletData.UnlockWalletRequest create() {
-                WalletData.UnlockWalletRequest r = new WalletData.UnlockWalletRequest();
-                // FIXME read from input fields
-                r.walletPassword = "12345678".getBytes();
-                return r;
-            }
-        });
-
-        // init wallet use case
-        RPCInitWallet initWallet = model_.initWalletRPC();
-        initWallet.setCallback(this, new IResponseCallback<WalletData.InitWalletResponse>() {
-            @Override
-            public void onResponse(WalletData.InitWalletResponse r) {
-                Log.i(TAG, "init wallet ok");
-                state_.setText("Inited");
-            }
-
-            @Override
-            public void onError(String code, String e) {
-                Log.e(TAG, "init wallet error "+code+" msg "+e);
-                state_.setText("init wallet error");
-            }
-        });
-        initWallet.setRequestFactory(this, new IRequestFactory<WalletData.InitWalletRequest>() {
-            @Override
-            public WalletData.InitWalletRequest create() {
-                WalletData.InitWalletRequest r = new WalletData.InitWalletRequest();
-                r.cipherSeedMnemonic = model_.genSeedRPC().response().cipherSeedMnemonic;
-                r.walletPassword = "12345678".getBytes();
-                return r;
-            }
-        });
-
-        // init wallet use case
-        RPCGenSeed genSeed = model_.genSeedRPC();
-        genSeed.setCallback(this, new IResponseCallback<WalletData.GenSeedResponse>() {
-            @Override
-            public void onResponse(WalletData.GenSeedResponse r) {
-                Log.i(TAG, "gen seed ok");
-                state_.setText("Seed: "+r.cipherSeedMnemonic);
-                model_.initWalletRPC().execute();
-            }
-
-            @Override
-            public void onError(String code, String e) {
-                Log.e(TAG, "gen seed error "+code+" msg "+e);
-                state_.setText("gen seed error");
-            }
-        });
-        genSeed.setRequestFactory(this, new IRequestFactory<WalletData.GenSeedRequest>() {
-            @Override
-            public WalletData.GenSeedRequest create() {
-                WalletData.GenSeedRequest r = new WalletData.GenSeedRequest();
-                return r;
-            }
-        });
-
-        recoverUseCases();
     }
 
     private void recoverUseCases() {
-        if (model_.unlockWalletRPC().isExecuting())
-            unlockWallet();
-        if (model_.initWalletRPC().isExecuting() || model_.genSeedRPC().isExecuting())
-            initWallet();
     }
 
     private void updateState() {
 
-        WalletData.WalletState st = model_.walletState().getValue();
         WalletData.WalletInfo info = model_.walletInfo().data().getValue();
 
-        if (st != null)
-            Log.i(TAG, "Wallet state "+st.state());
-        if (info != null)
-            Log.i(TAG, "Wallet info "+info.blockHeight());
-
         String state = "";
-        if (st == null) {
-            state = "Starting. ";
-        } else {
-            switch (st.state()) {
-                case WalletData.WALLET_STATE_AUTH:
-                    // show auth UI, ask for password
-                    // authClient_.setWalletPassword();
-                    state = "Locked. ";
-                    break;
-
-                case WalletData.WALLET_STATE_INIT:
-                    // call genSeed, ask for password, send to server
-                    state = "No wallet. ";
-                    break;
-
-                case WalletData.WALLET_STATE_ERROR:
-                    state = "Wallet state error " + st.code() + " msg " + st.message();
-                    break;
-
-                case WalletData.WALLET_STATE_OK:
-                    break;
-
-                default:
-                    throw new RuntimeException("Unknown wallet state");
-            }
-        }
-
-        if (!model_.haveSessionToken() && st != null && st.state() == WalletData.WALLET_STATE_OK) {
-            model_.getSessionToken(MainActivity.this);
-        }
-
         if (info != null) {
+            Log.i(TAG, "Wallet info "+info.blockHeight());
             if (info.syncedToChain() && info.syncedToGraph())
                 state += "Block: " + info.blockHeight() + ", synched.";
             else if (info.syncedToChain() && !info.syncedToGraph())
@@ -332,26 +134,18 @@ public class MainActivity extends FragmentActivity {
             else
                 state += "Block: " + info.blockHeight() + ", synching...";
         }
+        state += "\nChannels:";
+        if ((info.numActiveChannels() + info.numInactiveChannels() + info.numPendingChannels()) == 0)
+            state += " none";
+        else if (info.numActiveChannels() > 0)
+            state += " active "+info.numActiveChannels();
+        else if (info.numInactiveChannels() > 0)
+            state += " inactive "+info.numInactiveChannels();
+        else if (info.numPendingChannels() > 0)
+            state += " active "+info.numPendingChannels();
+        state += ". Peers: "+info.numPeers();
 
         state_.setText(state);
-    }
-
-    private void unlockWallet() {
-        state_.setText("Unlocking");
-        if (model_.unlockWalletRPC().isExecuting())
-            model_.unlockWalletRPC().recover();
-        else
-            model_.unlockWalletRPC().execute();
-    }
-
-    private void initWallet() {
-        state_.setText("Initing wallet");
-        if (model_.initWalletRPC().isExecuting())
-            model_.initWalletRPC().recover();
-        else if (model_.genSeedRPC().isExecuting())
-            model_.genSeedRPC().recover();
-        else
-            model_.genSeedRPC().execute();
     }
 
     @Override
@@ -379,18 +173,8 @@ public class MainActivity extends FragmentActivity {
         startActivity(intent);
     }
 
-    private void startListPayments() {
-        Intent intent = new Intent(this, ListPaymentsActivity.class);
-        startActivity(intent);
-    }
-
-    private void startConnectPeer() {
-        Intent intent = new Intent(this, ConnectPeerActivity.class);
-        startActivity(intent);
-    }
-
-    private void startListPeers() {
-        Intent intent = new Intent(this, ListPeersActivity.class);
+    private void startSendCoins() {
+        Intent intent = new Intent(this, SendCoinsActivity.class);
         startActivity(intent);
     }
 
@@ -399,8 +183,13 @@ public class MainActivity extends FragmentActivity {
         startActivity(intent);
     }
 
-    private void startSendCoins() {
-        Intent intent = new Intent(this, SendCoinsActivity.class);
+    private void startListPayments() {
+        Intent intent = new Intent(this, ListPaymentsActivity.class);
+        startActivity(intent);
+    }
+
+    private void startListPeers() {
+        Intent intent = new Intent(this, ListPeersActivity.class);
         startActivity(intent);
     }
 
@@ -409,18 +198,8 @@ public class MainActivity extends FragmentActivity {
         startActivity(intent);
     }
 
-    private void startOpenChannel() {
-        Intent intent = new Intent(this, OpenChannelActivity.class);
-        startActivity(intent);
-    }
-
     private void startListApps() {
         Intent intent = new Intent(this, ListAppsActivity.class);
-        startActivity(intent);
-    }
-
-    private void startAddContact() {
-        Intent intent = new Intent(this, AddContactActivity.class);
         startActivity(intent);
     }
 
@@ -449,4 +228,52 @@ public class MainActivity extends FragmentActivity {
         startActivity(intent);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menuWalletInfo:
+                startGetWalletInfo();
+                return true;
+            case R.id.menuApps:
+                startListApps();
+                return true;
+            case R.id.menuContacts:
+                startListContacts();
+                return true;
+            case R.id.menuPayments:
+                startListPayments();
+                return true;
+            case R.id.menuInvoices:
+                startListInvoices();
+                return true;
+            case R.id.menuChannels:
+                startListChannels();
+                return true;
+            case R.id.menuPeers:
+                startListPeers();
+                return true;
+            case R.id.menuTransactions:
+                startListTransactions();
+                return true;
+            case R.id.menuUtxo:
+                startListUtxo();
+                return true;
+            case R.id.menuHelp:
+//                showHelp();
+                return true;
+            case R.id.menuAbout:
+//                showAbout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
