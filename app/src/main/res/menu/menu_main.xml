@@ -38,10 +38,6 @@
         android:title="UTXO"
         app:showAsAction="never"
         />
-    <item android:id="@+id/menuHelp"
-        android:title="Help"
-        app:showAsAction="never"
-        />
     <item android:id="@+id/menuAbout"
         android:title="About"
         app:showAsAction="never"

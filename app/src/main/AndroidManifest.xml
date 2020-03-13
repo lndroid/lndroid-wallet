@@ -17,7 +17,8 @@
         android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-        <activity android:name=".init.CreateRootActivity"></activity>
+        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".init.CreateRootActivity" />
         <activity android:name=".init.GenSeedActivity" />
         <activity android:name=".init.InitActivity" />
         <activity android:name=".UnlockActivity" />

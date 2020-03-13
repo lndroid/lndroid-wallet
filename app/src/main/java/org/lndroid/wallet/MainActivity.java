@@ -228,6 +228,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void startAbout() {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -266,11 +271,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuUtxo:
                 startListUtxo();
                 return true;
-            case R.id.menuHelp:
-//                showHelp();
-                return true;
             case R.id.menuAbout:
-//                showAbout();
+                startAbout();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
