@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.multidex.MultiDexApplication;
+import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
 import org.lndroid.framework.WalletData;
@@ -180,8 +181,17 @@ public class Application extends MultiDexApplication {
 
         // ensure RecvPayment and SyncPayment workers are scheduled
         // NOTE: increase version if you adjust work settings to reschedule it
-        RecvPaymentWorker.schedule(getApplicationContext(), RecvPaymentWorkerImpl.class, 0);
-        SyncWorker.schedule(getApplicationContext(), SyncWorkerImpl.class, 0);
+        RecvPaymentWorker.schedule(getApplicationContext(), RecvPaymentWorkerImpl.class, 1);
+
+        // NOTE: a) worker can only work for 10 minutes, instead we should implement
+        // a long-lived BG service like here https://fabcirablog.weebly.com/blog/creating-a-never-ending-background-service-in-android-gt-7
+        // b) we should do general experiment running LND in BG ALL THE TIME and
+        // see how much battery drain it causes (slow down the bg plugin execution
+        // to reduce the actual CPU utilization)
+//        SyncWorker.schedule(getApplicationContext(), SyncWorkerImpl.class, 0);
+        WorkManager wm = WorkManager.getInstance(getApplicationContext());
+        wm.cancelAllWorkByTag(
+                org.lndroid.framework.usecases.bg.SyncWorkerImpl.getVersionTag(SyncWorker.WORK_ID, 0));
 
         // ensure notification channel
         createNotificationChannel();
@@ -254,6 +264,7 @@ public class Application extends MultiDexApplication {
                         .setContentIntent(pendingIntent)
                         .setOnlyAlertOnce(true)
                         .setOngoing(true)
+                        .setDefaults(0) // don't ring or vibrate
                 ;
 
                 updateBuilder(info);

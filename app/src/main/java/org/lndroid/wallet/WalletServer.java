@@ -3,10 +3,12 @@ package org.lndroid.wallet;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Looper;
 import android.os.Messenger;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import org.lndroid.framework.WalletData;
@@ -27,6 +29,8 @@ import org.lndroid.framework.engine.PluginServerStarter;
 import org.lndroid.framework.engine.PluginUtilsLocal;
 import org.lndroid.framework.usecases.bg.PaidInvoicesNotifyWorker;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class WalletServer {
 
     private static final String TAG = "WalletServer";
@@ -39,6 +43,7 @@ public class WalletServer {
     private WalletData.UserIdentity userId_;
     private AuthClient authClient_;
     private IKeyStore keyStore_;
+    private AtomicBoolean started_ = new AtomicBoolean(false);
 
     // Dao config wrapping an ApplicationContext
     private static class DaoConfig implements IDaoConfig {
@@ -100,6 +105,12 @@ public class WalletServer {
 
     private void startInstance(final Context ctx, boolean mayExist) {
 
+        if (server_ != null) {
+            if (!mayExist)
+                throw new RuntimeException("WalletServer already started");
+            return;
+        }
+
         userId_ = WalletData.UserIdentity.builder().setUserId(WalletData.ROOT_USER_ID).build();
 
         IDaoConfig cfg = new DaoConfig(ctx);
@@ -140,10 +151,34 @@ public class WalletServer {
                     }
                 })
                 .start(buildAnonymousPluginClient());
+
+        started_.set(true);
     }
 
-    public static void ensure(Context ctx) {
-        instance_.startInstance(ctx, true);
+    public static void ensure(final Context ctx) {
+        // make sure instance is started on the main thread
+        // AND that this thread is blocked until the instance is started
+        final boolean isMainThread = Looper.myLooper() == Looper.getMainLooper();
+        if (isMainThread) {
+            // if we're on the main thread then just execute synchronously
+            instance_.startInstance(ctx, true);
+        } else {
+            // if we're not main thread then post a job on to the main
+            // thread and wait until started_ turns to true
+            ContextCompat.getMainExecutor(ctx).execute(new Runnable() {
+                @Override
+                public void run() {
+                    instance_.startInstance(ctx, true);
+                }
+            });
+
+            // FIXME use something less dumb, like condition variable or some such...
+            while (!instance_.started_.get()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {}
+            }
+        }
     }
 
     public static void start(Context ctx) {

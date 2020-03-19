@@ -13,7 +13,7 @@ public class AuthComponentProvider implements IAuthComponentProvider {
     @Override
     public void assignAuthComponent(WalletData.AuthRequest.Builder b) {
         if (b.pluginId().equals(DefaultPlugins.ADD_APP_CONTACT)) {
-            b.setComponentPackageName(BuildConfig.APPLICATION_ID);
+                b.setComponentPackageName(BuildConfig.APPLICATION_ID);
             b.setComponentClassName(AddAppContactActivity.class.getName());
         }
         if (b.pluginId().equals(DefaultPlugins.ADD_LIST_CONTACTS_PRIVILEGE)) {

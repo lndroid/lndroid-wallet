@@ -38,6 +38,7 @@ public class AddAppContactViewModel extends WalletViewModelBase {
     public AddAppContactViewModel() {
         super(TAG);
 
+        // FIXME use IAuthClient and add WalletServer.buildAuthClient
         authClient_ = new AuthClient(WalletServer.getInstance().server());
 
         // create use cases
