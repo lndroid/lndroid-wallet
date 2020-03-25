@@ -29,6 +29,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Specify payreq or pubkey"
+                app:layout_constraintStart_toStartOf="@+id/scan"
+                app:layout_constraintTop_toBottomOf="@+id/scan" />
+
             <EditText
                 android:id="@+id/payreq"
                 android:layout_width="match_parent"
@@ -39,8 +48,21 @@
                 android:inputType="text"
                 android:hint="Payment request"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintStart_toStartOf="@+id/scan"
-                app:layout_constraintTop_toBottomOf="@+id/scan" />
+                app:layout_constraintStart_toStartOf="@+id/text"
+                app:layout_constraintTop_toBottomOf="@+id/text" />
+
+            <EditText
+                android:id="@+id/pubkey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:inputType="text"
+                android:hint="Pubkey"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:layout_constraintStart_toStartOf="@+id/payreq"
+                app:layout_constraintTop_toBottomOf="@+id/payreq" />
 
             <EditText
                 android:id="@+id/name"
@@ -52,8 +74,8 @@
                 android:inputType="text"
                 android:hint="Contact Name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintStart_toStartOf="@+id/payreq"
-                app:layout_constraintTop_toBottomOf="@+id/payreq" />
+                app:layout_constraintStart_toStartOf="@+id/pubkey"
+                app:layout_constraintTop_toBottomOf="@+id/pubkey" />
 
             <EditText
                 android:id="@+id/description"

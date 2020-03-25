@@ -73,8 +73,22 @@ public class OpenChannelActivity extends WalletActivityBase {
             @Override
             public WalletData.OpenChannelRequest create() {
 
-                Long amount = Long.valueOf(amount_.getText().toString());
-                Long pushAmount = Long.valueOf(pushAmount_.getText().toString());
+                Long amount = 0L;
+                Long pushAmount = 0L;
+                try {
+                    if (!amount_.getText().toString().isEmpty())
+                        amount = Long.valueOf(amount_.getText().toString());
+                    if (!pushAmount_.getText().toString().isEmpty())
+                        pushAmount = Long.valueOf(pushAmount_.getText().toString());
+                } catch (NumberFormatException e) {
+                    state_.setText("Please enter the amounts as numbers");
+                    return null;
+                }
+
+                if (amount == 0) {
+                    state_.setText("Please specify the amount");
+                    return null;
+                }
 
                 return WalletData.OpenChannelRequest.builder()
                         .setNodePubkey(pubkey_.getText().toString())

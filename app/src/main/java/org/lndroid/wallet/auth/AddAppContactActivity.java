@@ -112,8 +112,10 @@ public class AddAppContactActivity extends AuthActivityBase {
             @Override
             public void onChanged(String s) {
                 if (s != null && !s.isEmpty()) {
+                    if (s.startsWith("lightning:"))
+                        s = s.substring("lightning:".length());
                     payReq_.setText(s);
-                    payReq_.setEnabled(false);
+//                    payReq_.setEnabled(false);
                 }
             }
         });

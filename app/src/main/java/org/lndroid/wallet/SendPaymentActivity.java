@@ -2,6 +2,7 @@ package org.lndroid.wallet;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -11,6 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.lndroid.framework.common.IResponseCallback;
 import org.lndroid.framework.WalletData;
@@ -47,6 +51,24 @@ public class SendPaymentActivity extends WalletActivityBase {
                 sendPayment();
             }
         });
+        Button scan = findViewById(R.id.scan);
+        scan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startScan();
+            }
+        });
+
+        model_.scanResult().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if (s != null && !s.isEmpty()) {
+                    if (s.startsWith("lightning:"))
+                        s = s.substring("lightning:".length());
+                    payReq_.setText(s);
+                }
+            }
+        });
 
         JobSendPayment sendPaymentJob = model_.sendPaymentJob();
         sendPaymentJob.setCallback(this, new IResponseCallback<WalletData.SendPayment>() {
@@ -69,7 +91,7 @@ public class SendPaymentActivity extends WalletActivityBase {
             public WalletData.SendPaymentRequest create() {
                 return WalletData.SendPaymentRequest.builder()
                         .setPaymentRequest(payReq_.getText().toString())
-                        .setMaxTries(10)
+                        .setMaxTries(20)
                         .build();
             }
         });
@@ -96,4 +118,22 @@ public class SendPaymentActivity extends WalletActivityBase {
         intent.putExtra(Application.ID_MESSAGE, id);
         startActivity(intent);
     }
+
+    private void startScan(){
+        model_.startScan();
+        new IntentIntegrator(this).initiateScan();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() != null) {
+                model_.setScanResult(result.getContents());
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
 }

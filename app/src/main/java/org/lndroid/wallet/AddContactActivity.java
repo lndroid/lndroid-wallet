@@ -25,6 +25,7 @@ public class AddContactActivity extends WalletActivityBase {
     private static final String TAG = "AddContactActivity";
 
     private EditText payReq_;
+    private EditText pubkey_;
     private EditText name_;
     private EditText description_;
     private EditText url_;
@@ -49,6 +50,7 @@ public class AddContactActivity extends WalletActivityBase {
         Button cancel = findViewById(R.id.cancel);
         Button scan = findViewById(R.id.scan);
         payReq_ = findViewById(R.id.payreq);
+        pubkey_ = findViewById(R.id.pubkey);
         name_ = findViewById(R.id.name);
         description_ = findViewById(R.id.description);
         url_ = findViewById(R.id.url);
@@ -63,7 +65,10 @@ public class AddContactActivity extends WalletActivityBase {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                decodePayReq();
+                if (payReq_.getText().toString().isEmpty())
+                    addContact();
+                else
+                    decodePayReq();
             }
         });
         scan.setOnClickListener(new View.OnClickListener() {
@@ -110,14 +115,23 @@ public class AddContactActivity extends WalletActivityBase {
         model_.addContact().setRequestFactory(this, new IRequestFactory<WalletData.AddContactRequest>() {
             @Override
             public WalletData.AddContactRequest create() {
-                return WalletData.AddContactRequest.builder()
-                        .setPubkey(model_.decodePayReq().response().destPubkey())
-                        .setName(name_.getText().toString())
-                        .setDescription(description_.getText().toString())
-                        .setUrl(url_.getText().toString())
-                        .setRouteHints(model_.decodePayReq().response().routeHints())
-                        .setFeatures(model_.decodePayReq().response().features())
-                        .build();
+                if (model_.decodePayReq().response() != null) {
+                    return WalletData.AddContactRequest.builder()
+                            .setPubkey(model_.decodePayReq().response().destPubkey())
+                            .setName(name_.getText().toString())
+                            .setDescription(description_.getText().toString())
+                            .setUrl(url_.getText().toString())
+                            .setRouteHints(model_.decodePayReq().response().routeHints())
+                            .setFeatures(model_.decodePayReq().response().features())
+                            .build();
+                } else {
+                    return WalletData.AddContactRequest.builder()
+                            .setPubkey(pubkey_.getText().toString())
+                            .setName(name_.getText().toString())
+                            .setDescription(description_.getText().toString())
+                            .setUrl(url_.getText().toString())
+                            .build();
+                }
             }
         });
         model_.addContact().setCallback(this, new IResponseCallback<WalletData.Contact>() {

@@ -32,6 +32,7 @@
         android:text="Developer-focused Bitcoin Lightning Network wallet with an open API.\n
 https://lndroid.org/\n
 https://github.com/lndroid\n
+wallet@lndroid.org\n
 Twitter: @LndroidOrg"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/title" />

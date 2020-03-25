@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import org.lndroid.framework.common.IResponseCallback;
@@ -23,6 +24,7 @@ public class AddInvoiceActivity extends WalletActivityBase {
 
     private EditText amount_;
     private EditText description_;
+    private Switch isPrivate_;
     private TextView state_;
     private AddInvoiceViewModel model_;
 
@@ -41,6 +43,7 @@ public class AddInvoiceActivity extends WalletActivityBase {
 
         amount_ = findViewById(R.id.amount);
         description_ = findViewById(R.id.description);
+//        isPrivate_ = findViewById(R.id.isPrivate);
         state_ = findViewById(R.id.state);
 
         Button button = findViewById(R.id.addInvoice);
@@ -78,6 +81,7 @@ public class AddInvoiceActivity extends WalletActivityBase {
                     return null;
                 }
                 b.setDescription(description_.getText().toString());
+//                b.setsetIsPrivate(isPrivate_.isChecked())
                 return b.build();
             }
         });

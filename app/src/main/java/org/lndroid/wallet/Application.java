@@ -222,8 +222,9 @@ public class Application extends MultiDexApplication {
                 String text = "";
                 if (info.activeSendPaymentCount() > 0)
                     text += (text.isEmpty() ? "": ", ")+"Sending payments: "+info.activeSendPaymentCount();
-                if (info.pendingChannelCount() > 0)
-                    text += (text.isEmpty() ? "": ", ")+"Pending channels: "+info.pendingChannelCount()+"\n";
+                // These might take weeks so don't bother...
+//                if (info.pendingChannelCount() > 0)
+//                    text += (text.isEmpty() ? "": ", ")+"Pending channels: "+info.pendingChannelCount()+"\n";
                 if (info.activeOpenChannelCount() > 0)
                     text += (text.isEmpty() ? "": ", ")+"Opening channels: "+info.activeOpenChannelCount()+"\n";
                 if (info.activeCloseChannelCount() > 0)
@@ -280,7 +281,6 @@ public class Application extends MultiDexApplication {
                 NotificationManager notificationManager = (NotificationManager)
                         getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
                 notificationManager.cancel(notificationId());
-
                 notification_ = null;
             }
 

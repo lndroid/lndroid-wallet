@@ -121,10 +121,10 @@ public class MainActivity extends AppCompatActivity {
     private void updateState() {
 
         WalletData.WalletInfo info = model_.walletInfo().data().getValue();
-
-        String state = "";
+        String state = "Starting...";
         if (info != null) {
-            Log.i(TAG, "Wallet info "+info.blockHeight());
+            state = "";
+            Log.i(TAG, "Wallet info " + info.blockHeight());
             if (info.syncedToChain() && info.syncedToGraph())
                 state += "Block: " + info.blockHeight() + ", synched.";
             else if (info.syncedToChain() && !info.syncedToGraph())
@@ -133,18 +133,18 @@ public class MainActivity extends AppCompatActivity {
                 state += "Block: " + info.blockHeight() + ", synching blockchain...";
             else
                 state += "Block: " + info.blockHeight() + ", synching...";
-        }
-        state += "\nChannels:";
-        if ((info.numActiveChannels() + info.numInactiveChannels() + info.numPendingChannels()) == 0)
-            state += " none";
-        else if (info.numActiveChannels() > 0)
-            state += " active "+info.numActiveChannels();
-        else if (info.numInactiveChannels() > 0)
-            state += " inactive "+info.numInactiveChannels();
-        else if (info.numPendingChannels() > 0)
-            state += " active "+info.numPendingChannels();
-        state += ". Peers: "+info.numPeers();
 
+            state += "\nChannels:";
+            if ((info.numActiveChannels() + info.numInactiveChannels() + info.numPendingChannels()) == 0)
+                state += " none";
+            else if (info.numActiveChannels() > 0)
+                state += " active " + info.numActiveChannels();
+            else if (info.numInactiveChannels() > 0)
+                state += " inactive " + info.numInactiveChannels();
+            else if (info.numPendingChannels() > 0)
+                state += " active " + info.numPendingChannels();
+            state += ". Peers: " + info.numPeers();
+        }
         state_.setText(state);
     }
 
